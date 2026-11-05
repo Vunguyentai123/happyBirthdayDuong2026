@@ -1,3 +1,5 @@
+import { asset } from './assets'
+
 export interface DialogueSet {
   gateBlock: string[]
   unlock: string[]
@@ -133,8 +135,8 @@ Một tấm ảnh mới cho album này.
 Và một điều ước nữa, để dành cho lần sau.
 
 Hạn dùng: mãi mãi.`,
-  musicSrc: '/audio/bai1.mp3',
-  musicPlaylist: ['/audio/bai1.mp3', '/audio/bai2.mp3'],
+  musicSrc: asset('/audio/bai1.mp3'),
+  musicPlaylist: [asset('/audio/bai1.mp3'), asset('/audio/bai2.mp3')],
 }
 
 export function pickRandom(lines: string[]): string {

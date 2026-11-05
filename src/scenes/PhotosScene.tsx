@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { content, pickRandom } from '../data/content'
 import { generatedPhotos } from '../data/photos.generated'
+import { asset } from '../data/assets'
 import { useSceneStore } from '../store/useSceneStore'
 import { Character } from '../components/Character'
 import { NextButton, PageFrame, PageHead } from '../components/PaperPage'
@@ -9,16 +10,20 @@ import { NextButton, PageFrame, PageHead } from '../components/PaperPage'
 // Trang 4: ALBUM KÝ ỨC — polaroid dán băng dính trên dây đèn, vuốt ngang,
 // chấm chuyển ảnh, bấm để phóng to. Không có ảnh thì dùng 3 khung minh hoạ.
 const samplePhotos = [
-  '/characters/usagi-08.png',
-  '/characters/momonga-04.png',
-  '/characters/momonga-02.png',
+  asset('/characters/usagi-08.png'),
+  asset('/characters/momonga-04.png'),
+  asset('/characters/momonga-02.png'),
 ]
 const SLIDE_MS = 520
 const HOLD_MS = 5200
 
 export function PhotosScene() {
   const next = useSceneStore((s) => s.next)
-  const photos = generatedPhotos.length > 0 ? generatedPhotos.slice(0, 20) : samplePhotos
+  const photos = useMemo(
+    () =>
+      (generatedPhotos.length > 0 ? generatedPhotos.slice(0, 20) : samplePhotos).map((p) => asset(p)),
+    [],
+  )
   const captions = useMemo(
     () =>
       photos.map((_, i) =>

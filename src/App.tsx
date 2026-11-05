@@ -5,10 +5,17 @@ import { Loader } from './components/Loader'
 import { MusicPlayer } from './components/MusicPlayer'
 import { useLiteFallback } from './hooks/hooks'
 import { usagiHopFrames, momongaRoles } from './data/characters'
+import { asset } from './data/assets'
 
 const CanvasRoot = lazy(() => import('./three/CanvasRoot').then((m) => ({ default: m.CanvasRoot })))
 
-const preloadList = [...usagiHopFrames, ...Object.values(momongaRoles).map((r) => r.file), '/characters/usagi-07.png', '/characters/usagi-08.png', '/characters/usagi-09.png']
+const preloadList = [
+  ...usagiHopFrames,
+  ...Object.values(momongaRoles).map((r) => r.file),
+  asset('/characters/usagi-07.png'),
+  asset('/characters/usagi-08.png'),
+  asset('/characters/usagi-09.png'),
+]
 
 export default function App() {
   // Chỉ còn 1 giao diện: bản đầy đủ 3D. Cờ lite chỉ bật khi máy không có WebGL
