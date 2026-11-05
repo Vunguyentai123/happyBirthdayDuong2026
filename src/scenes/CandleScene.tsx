@@ -11,6 +11,7 @@ import {
 import { content, pickRandom } from '../data/content'
 import { useSceneStore } from '../store/useSceneStore'
 import { Character } from '../components/Character'
+import { MicHelpSheet } from '../components/MicHelpSheet'
 import { useHoldToBlow, useMicBlow } from '../hooks/hooks'
 
 // Màn 3 THỔI ĐIỀU ƯỚC: bánh 3D nhiều tầng, nến thật có lửa run và khói sau khi
@@ -215,6 +216,13 @@ export function CandleScene({ lite }: { lite: boolean }) {
             </div>
           )}
         </div>
+
+        <MicHelpSheet
+          open={mic.helpOpen}
+          problem={mic.problem}
+          onRetry={mic.retry}
+          onClose={mic.closeHelp}
+        />
       </div>
     </div>
   )

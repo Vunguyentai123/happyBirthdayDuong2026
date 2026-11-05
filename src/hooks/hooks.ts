@@ -30,15 +30,52 @@ export function useLiteFallback(): boolean {
   return noWebgl
 }
 
+// ---------------------------------------------------------------------------
+// Micro thổi nến
+// ---------------------------------------------------------------------------
+
+/** Vì sao micro không mở được — quyết định nội dung bảng hướng dẫn. */
+export type MicProblem = '' | 'insecure' | 'in-app' | 'denied' | 'no-device' | 'failed'
+
+export type MicPlatform = 'ios' | 'android' | 'desktop'
+
+export function micPlatform(): MicPlatform {
+  if (typeof navigator === 'undefined') return 'desktop'
+  const ua = navigator.userAgent
+  const isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  if (isIOS) return 'ios'
+  if (/Android/i.test(ua)) return 'android'
+  return 'desktop'
+}
+
+// Zalo, Facebook, Messenger, Instagram, TikTok... đều là webview riêng và
+// thường chặn micro. Nhận ra để hướng dẫn mở bằng trình duyệt thật.
+const IN_APP_RE = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|TikTok|; wv\)/i
+
+export function isInAppBrowser(): boolean {
+  return typeof navigator !== 'undefined' && IN_APP_RE.test(navigator.userAgent)
+}
+
+// Tắt bộ lọc cho giọng nói: tiếng thổi là dải ồn rộng, bật khử ồn sẽ nuốt mất.
+const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
+  echoCancellation: false,
+  noiseSuppression: false,
+  autoGainControl: false,
+}
+
 // Nghe tiếng THỔI bằng micro để tắt nến. Trả về trạng thái để UI vẽ thanh âm
-// lượng + câu nhắc. Đổ đầy `fill` (0..1) khi nghe tiếng thổi đủ lâu rồi gọi
-// onBlow. Mọi lỗi (http không phải localhost, khách từ chối quyền, máy không có
-// micro) đều trả về `note` để hiện lên chứ không im lặng nữa.
+// lượng + câu nhắc. Mọi lỗi (http không phải localhost, khách từ chối quyền, mở
+// trong Zalo/Facebook, máy không có micro) đều trả về `problem` để mở bảng
+// hướng dẫn cấp quyền thay vì im lặng.
 export function useMicBlow(onBlow: () => void) {
   const [on, setOn] = useState(false)
   const [level, setLevel] = useState(0) // 0..1 mức âm thanh đang nghe được
   const [fill, setFill] = useState(0) // 0..1 tiến độ "thổi"
   const [note, setNote] = useState('')
+  const [problem, setProblem] = useState<MicProblem>('')
+  const [helpOpen, setHelpOpen] = useState(false)
   const st = useRef<{ ctx: AudioContext | null; stream: MediaStream | null; raf: number; pending: boolean }>({
     ctx: null, stream: null, raf: 0, pending: false,
   })
@@ -67,50 +104,93 @@ export function useMicBlow(onBlow: () => void) {
 
   useEffect(() => stop, [stop]) // rời màn -> tắt micro
 
+  // Mở bảng hướng dẫn + câu nhắc ngắn trong khay.
+  const fail = useCallback((p: MicProblem, msg: string) => {
+    setProblem(p)
+    setHelpOpen(true)
+    setNote(msg)
+  }, [])
+
   const start = useCallback(async () => {
     const s = st.current
     if (s.stream || s.pending) return
-    s.pending = true
+
+    // 1) Môi trường có cho dùng micro không? (https + trình duyệt hỗ trợ)
     const md = navigator.mediaDevices
-    if (!md?.getUserMedia) {
-      s.pending = false
-      setNote('Trình duyệt chỉ mở micro khi web chạy https (hoặc localhost).')
+    if (!window.isSecureContext || !md?.getUserMedia) {
+      fail(isInAppBrowser() ? 'in-app' : 'insecure', 'Micro chỉ mở được khi web chạy https.')
       return
-    }
-    // Tạo AudioContext NGAY trong lượt bấm (đồng bộ) — iOS/Safari chỉ cho chạy
-    // audio nếu context sinh ra từ cử chỉ người dùng, tạo sau `await` là câm.
-    const Ctor =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-    if (!Ctor) {
-      s.pending = false
-      setNote('Thiết bị không phân tích được âm thanh.')
-      return
-    }
-    const ctx = new Ctor()
-    try {
-      await ctx.resume()
-    } catch {
-      /* Safari cũ: bỏ qua */
     }
 
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    if (!Ctor) {
+      fail('failed', 'Thiết bị này không phân tích được âm thanh.')
+      return
+    }
+
+    s.pending = true
+    setProblem('')
+    setHelpOpen(false)
     setNote('Đang xin quyền micro...')
+
+    // 2) AudioContext tạo ngay trong cử chỉ chạm — iOS/Safari không cho tạo sau await.
+    const ctx = new Ctor()
+
+    // 3) getUserMedia phải được GỌI ngay trong cử chỉ chạm. iPhone chỉ hiện hộp
+    //    thoại xin quyền khi lời gọi nằm cùng nhịp với thao tác chạm; trước đây
+    //    code await ctx.resume() rồi mới gọi nên trên điện thoại không có hộp
+    //    thoại nào hiện ra. Vì vậy: gọi trước, await sau.
+    let gum: Promise<MediaStream>
+    try {
+      gum = md.getUserMedia({ audio: AUDIO_CONSTRAINTS })
+    } catch (err) {
+      gum = Promise.reject(err)
+    }
+    // Gắn handler ngay: lúc còn chờ resume, promise này có thể reject trước khi
+    // ta await -> trình duyệt báo "unhandled rejection" và bảng lỗi không hiện.
+    gum.catch(() => {})
+
+    // resume() không được chặn luồng: trên Safari nó có thể treo mãi nếu chưa
+    // có thêm cử chỉ. Chạy song song rồi chờ có giới hạn.
+    const resumed = ctx.resume().catch(() => {})
+
+    // Dịch lỗi của trình duyệt thành việc cần làm.
+    const failFor = (err: unknown) => {
+      const name = (err as DOMException)?.name
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        fail(isInAppBrowser() ? 'in-app' : 'denied', 'Micro đang bị chặn — xem cách bật bên dưới nhé.')
+      } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+        fail('no-device', 'Máy này không có micro nào.')
+      } else if (name === 'NotReadableError' || name === 'TrackStartError') {
+        fail('failed', 'Micro đang bị ứng dụng khác dùng mất rồi.')
+      } else {
+        fail('failed', 'Không mở được micro, thử lại nhé.')
+      }
+    }
+
     let stream: MediaStream
     try {
-      stream = await md.getUserMedia({
-        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
-      })
+      stream = await gum
     } catch (err) {
-      s.pending = false
-      if (ctx.state !== 'closed') void ctx.close().catch(() => {})
+      // Một số máy Android từ chối bộ lọc âm thanh -> thử lại cấu hình tối giản.
       const name = (err as DOMException)?.name
-      setNote(
-        name === 'NotAllowedError'
-          ? 'Bạn cần bấm “Cho phép” khi trình duyệt hỏi quyền micro nhé.'
-          : name === 'NotFoundError'
-            ? 'Máy này không có micro nào.'
-            : 'Không mở được micro, thử lại nhé.',
-      )
-      return
+      if (name === 'OverconstrainedError' || name === 'NotSupportedError' || name === 'TypeError') {
+        try {
+          stream = await md.getUserMedia({ audio: true })
+        } catch (err2) {
+          s.pending = false
+          if (ctx.state !== 'closed') void ctx.close().catch(() => {})
+          failFor(err2)
+          return
+        }
+      } else {
+        s.pending = false
+        if (ctx.state !== 'closed') void ctx.close().catch(() => {})
+        failFor(err)
+        return
+      }
     }
     // Khách bấm tắt trong lúc đang chờ cấp quyền -> dọn luôn
     if (!s.pending) {
@@ -118,11 +198,19 @@ export function useMicBlow(onBlow: () => void) {
       if (ctx.state !== 'closed') void ctx.close().catch(() => {})
       return
     }
-    try {
-      await ctx.resume()
-    } catch {
-      /* bỏ qua */
+    // Chờ resume xong, nhưng tối đa 1,2s để không treo giao diện.
+    await Promise.race([resumed, new Promise((r) => setTimeout(r, 1200))])
+    // Khách bấm tắt trong lúc chờ -> không dựng lại micro đã tắt.
+    if (!s.pending) {
+      stream.getTracks().forEach((t) => t.stop())
+      if (ctx.state !== 'closed') void ctx.close().catch(() => {})
+      return
     }
+    // iOS đôi khi vẫn để context ở trạng thái suspended: thêm một lần chạm nữa là chạy.
+    if (ctx.state !== 'running') {
+      window.addEventListener('pointerdown', () => void ctx.resume().catch(() => {}), { once: true })
+    }
+
     const an = ctx.createAnalyser()
     an.fftSize = 1024
     an.smoothingTimeConstant = 0.5
@@ -132,6 +220,8 @@ export function useMicBlow(onBlow: () => void) {
 
     st.current = { ctx, stream, raf: 0, pending: false }
     setOn(true)
+    setProblem('')
+    setHelpOpen(false)
     setNote('Thổi vào micro nhé!')
 
     let warm = 0 // bỏ qua mấy frame đầu (tiếng bấm nút)
@@ -183,14 +273,21 @@ export function useMicBlow(onBlow: () => void) {
       st.current.raf = requestAnimationFrame(tick)
     }
     st.current.raf = requestAnimationFrame(tick)
-  }, [stop])
+  }, [fail, stop])
 
   const toggle = useCallback(() => {
     if (st.current.stream || st.current.pending) stop()
     else void start()
   }, [start, stop])
 
-  return { on, level, fill, note, toggle, stop }
+  const retry = useCallback(() => {
+    setHelpOpen(false)
+    void start()
+  }, [start])
+
+  const closeHelp = useCallback(() => setHelpOpen(false), [])
+
+  return { on, level, fill, note, problem, helpOpen, toggle, stop, retry, closeHelp }
 }
 
 // Bam va giu ~1.5s de thoi nen. Tra ve {holding, progress, done, start, cancel}

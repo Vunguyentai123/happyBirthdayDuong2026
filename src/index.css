@@ -1889,7 +1889,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  height: 36px;
+  height: 44px;
   padding: 0 0.85rem;
   border: 1px solid rgba(201, 162, 93, 0.35);
   border-radius: 999px;
@@ -1897,7 +1897,7 @@ body {
   background: rgba(255, 255, 255, 0.66);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
   font-family: var(--font-round);
-  font-size: 0.67rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.005em;
   cursor: pointer;
@@ -2340,7 +2340,7 @@ body {
   .candle-seal { width: 62px; height: 62px; }
   .candle-dock { padding: 0.78rem 0.8rem 0.84rem; border-radius: 1.66rem; }
   .candle-blow { height: 54px; font-size: 0.92rem; }
-  .candle-mic, .candle-tool-tip { height: 38px; }
+  .candle-mic, .candle-tool-tip { height: 46px; }
   .candle-after-title { font-size: 1.02rem; }
   .candle-turn-face { width: 42px; height: 42px; }
   .candle-turn-line { font-size: 0.86rem; }
@@ -2367,7 +2367,7 @@ body {
   .candle-dock-head { padding-bottom: 0.4rem; }
   .candle-blow { height: 46px; font-size: 0.82rem; }
   .candle-tools { margin-top: 0.34rem; }
-  .candle-mic, .candle-tool-tip { height: 32px; }
+  .candle-mic, .candle-tool-tip { height: 44px; }
   .candle-after-head { padding-bottom: 0.38rem; }
   .candle-after-sub { display: none; }
   .candle-exchange { padding-top: 0.4rem; }
@@ -2593,6 +2593,171 @@ body {
 .scene-back:focus-visible {
   outline: 2px solid #c05070;
   outline-offset: 2px;
+}
+
+/* --- Bảng hướng dẫn cấp quyền micro -------------------------------------- */
+.mic-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(59, 27, 41, 0.34);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  animation: mic-fade 0.22s ease both;
+}
+
+.mic-sheet {
+  position: fixed;
+  z-index: 61;
+  inset-inline: 0;
+  bottom: 0;
+  width: min(100%, 460px);
+  max-height: 84dvh;
+  margin-inline: auto;
+  padding: 0.5rem 1.15rem calc(1.4rem + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  border: 1px solid rgba(201, 162, 93, 0.45);
+  border-bottom: 0;
+  border-radius: 1.7rem 1.7rem 0 0;
+  background: radial-gradient(120% 90% at 50% 0%, #fffdf8 0%, #fdf6ea 58%, #f9eee0 100%);
+  box-shadow:
+    0 -26px 50px -32px rgba(79, 32, 48, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: mic-sheet-up 0.3s cubic-bezier(0.22, 0.8, 0.24, 1) both;
+}
+
+.mic-sheet:focus-visible {
+  outline: none;
+}
+
+.mic-sheet-grip {
+  display: block;
+  width: 42px;
+  height: 4px;
+  margin: 0.15rem auto 0.7rem;
+  border-radius: 999px;
+  background: rgba(201, 162, 93, 0.45);
+}
+
+.mic-sheet-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.65rem;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: #8a5f6d;
+  transition: background 0.18s ease;
+}
+
+.mic-sheet-close:hover {
+  background: rgba(201, 162, 93, 0.16);
+}
+
+.mic-sheet-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-right: 2.6rem;
+}
+
+.mic-sheet-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 93, 0.5);
+  background: #fff7ea;
+  color: #a8455f;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.mic-sheet-title {
+  font-family: var(--font-editorial);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #6b2b41;
+  text-wrap: balance;
+}
+
+.mic-sheet-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mic-sheet-steps li {
+  display: flex;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #7a5561;
+}
+
+.mic-sheet-num {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  margin-top: 0.06rem;
+  border-radius: 999px;
+  background: #ffd9e6;
+  color: #8a2f47;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.mic-sheet-alt {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.9rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 244, 224, 0.85);
+  color: #8a5f22;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.mic-sheet-alt svg {
+  flex: 0 0 auto;
+}
+
+.mic-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.95rem;
+}
+
+@keyframes mic-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mic-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* --- Màn chờ ------------------------------------------------------------- */
@@ -3443,7 +3608,9 @@ body {
   .letter-tap,
   .bday-yaha,
   .loader-cake,
-  .gift-aura {
+  .gift-aura,
+  .mic-sheet,
+  .mic-sheet-backdrop {
     animation: none !important;
   }
   .bday-cta::after {
