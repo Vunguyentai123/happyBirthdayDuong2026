@@ -2547,6 +2547,54 @@ body {
   background: linear-gradient(180deg, #ffffff 0%, #fdf6ea 100%);
 }
 
+/* --- Nút quay lại màn trước ---------------------------------------------- */
+/* Cùng tông giấy với đĩa nhạc ở góc phải, nhưng dẹt thành viên thuốc để chữ
+   "Màn trước" đọc được. Vùng bấm cao 44px cho đúng chuẩn ngón tay. */
+.scene-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  min-height: 44px;
+  padding: 0 0.9rem 0 0.72rem;
+  border: 1px solid rgba(201, 162, 93, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 249, 238, 0.92);
+  color: #6b2336;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  box-shadow:
+    0 12px 22px -18px rgba(79, 32, 48, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.scene-back svg {
+  color: #a8455f;
+}
+
+.scene-back:hover {
+  background: #fffcf5;
+  box-shadow:
+    0 14px 24px -18px rgba(79, 32, 48, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.scene-back:active {
+  transform: scale(0.96);
+}
+
+.scene-back:focus-visible {
+  outline: 2px solid #c05070;
+  outline-offset: 2px;
+}
+
 /* --- Màn chờ ------------------------------------------------------------- */
 .loader-screen {
   position: fixed;

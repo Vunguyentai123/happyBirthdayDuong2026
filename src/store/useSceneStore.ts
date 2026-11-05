@@ -14,6 +14,7 @@ export interface SceneStore {
   gatePassed: boolean // tra loi dung ca 3 cau man khoa
   setScene: (s: SceneId) => void
   next: () => void
+  prev: () => void
   restart: () => void
   setProgress: (p: number) => void
   setWishBlown: (v: boolean) => void
@@ -39,6 +40,14 @@ export const useSceneStore = create<SceneStore>((set) => ({
       const i = sceneOrder.indexOf(s.scene)
       if (i < 0 || i >= sceneOrder.length - 1) return s
       return { scene: sceneOrder[i + 1], progress: 0 }
+    }),
+  // Quay lại màn trước. Dừng ở thiệp chào mừng: không mở lại màn khoá
+  // (câu hỏi đã trả lời rồi, quay lại đó chỉ gây bối rối).
+  prev: () =>
+    set((s) => {
+      const i = sceneOrder.indexOf(s.scene)
+      if (i <= 1) return s
+      return { scene: sceneOrder[i - 1], progress: 0 }
     }),
   restart: () => set({ scene: 'lock', progress: 0, wishBlown: false, giftOpen: false, unlocked: false, gatePassed: false }),
   setProgress: (progress) => set({ progress }),
