@@ -6,6 +6,7 @@ import { useSceneStore } from '../store/useSceneStore'
 import { Character } from '../components/Character'
 import { UsagiHop } from '../components/UsagiHop'
 import { MusicToggle } from '../components/MusicToggle'
+import { prewarmMic } from '../hooks/hooks'
 
 const CONFETTI_COLORS = [
   '#9C3F56',
@@ -140,6 +141,9 @@ export function GreetingScene() {
 
   const goNext = () => {
     if (leaving) return
+    // Xin quyền micro ngay trong cú chạm này (Safari/iPhone chỉ hiện hộp thoại
+    // khi lời gọi nằm trong cử chỉ chạm). Màn thổi nến sẽ dùng lại luồng đó.
+    prewarmMic()
     setLeaving(true)
 
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches

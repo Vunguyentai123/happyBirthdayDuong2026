@@ -43,6 +43,15 @@ export function CandleScene({ lite }: { lite: boolean }) {
 
   const { holding, progress: holdProgress, start, cancel } = useHoldToBlow(1500, blowOut)
   const mic = useMicBlow(blowOut)
+  const autoStartMic = mic.autoStart
+
+  // Vào màn là tự xin quyền micro: khách chỉ cần bấm "Cho phép" trong hộp thoại
+  // của điện thoại. Chờ 0,6s cho cảnh hiện xong rồi mới hỏi, đỡ giật mình.
+  useEffect(() => {
+    if (wishBlown) return
+    const id = window.setTimeout(() => void autoStartMic(), 600)
+    return () => window.clearTimeout(id)
+  }, [autoStartMic, wishBlown])
 
   // Nền sáng dần theo hơi thổi; nhả tay hoặc tắt micro giữa chừng thì trả về 0.
   useEffect(() => {
