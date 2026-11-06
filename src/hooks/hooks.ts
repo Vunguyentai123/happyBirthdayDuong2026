@@ -158,6 +158,8 @@ export function useMicBlow(onBlow: () => void) {
   const st = useRef<{ ctx: AudioContext | null; stream: MediaStream | null; raf: number; pending: boolean }>({
     ctx: null, stream: null, raf: 0, pending: false,
   })
+  // Khách chủ động tắt micro thì đừng tự bật lại khi quay lại tab.
+  const manualOff = useRef(false)
   const blowRef = useRef(onBlow)
   useEffect(() => {
     blowRef.current = onBlow
@@ -195,6 +197,7 @@ export function useMicBlow(onBlow: () => void) {
   const start = useCallback(async (quiet = false) => {
     const s = st.current
     if (s.stream || s.pending) return
+    manualOff.current = false
 
     // 1) Môi trường có cho dùng micro không? (https + trình duyệt hỗ trợ)
     const md = navigator.mediaDevices
@@ -368,8 +371,13 @@ export function useMicBlow(onBlow: () => void) {
   }, [fail, stop])
 
   const toggle = useCallback(() => {
-    if (st.current.stream || st.current.pending) stop()
-    else void start(false)
+    if (st.current.stream || st.current.pending) {
+      manualOff.current = true
+      stop()
+    } else {
+      manualOff.current = false
+      void start(false)
+    }
   }, [start, stop])
 
   const retry = useCallback(() => {
@@ -378,6 +386,7 @@ export function useMicBlow(onBlow: () => void) {
   }, [start])
 
   const closeHelp = useCallback(() => setHelpOpen(false), [])
+  const openHelp = useCallback(() => setHelpOpen(true), [])
 
   // Xin quyền TỰ ĐỘNG khi vừa vào màn thổi nến: khách chỉ cần bấm "Cho phép"
   // trong hộp thoại của điện thoại. Nếu máy đã từ chối từ trước thì không hỏi
@@ -403,7 +412,24 @@ export function useMicBlow(onBlow: () => void) {
     void start(true)
   }, [start])
 
-  return { on, level, fill, note, problem, helpOpen, toggle, stop, retry, closeHelp, autoStart }
+  // Khách ra Cài đặt bật quyền rồi quay lại tab: tự mở micro luôn, khỏi bấm lại.
+  // (Trừ khi chính khách vừa chủ động tắt micro.)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      if (manualOff.current) return
+      if (st.current.stream || st.current.pending) return
+      void start(true)
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', onVisible)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', onVisible)
+    }
+  }, [start])
+
+  return { on, level, fill, note, problem, helpOpen, toggle, stop, retry, closeHelp, openHelp, autoStart }
 }
 
 // Bam va giu ~1.5s de thoi nen. Tra ve {holding, progress, done, start, cancel}

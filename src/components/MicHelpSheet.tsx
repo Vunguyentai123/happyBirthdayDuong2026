@@ -49,21 +49,24 @@ function stepsFor(problem: Exclude<MicProblem, ''>): string[] {
   const platform = micPlatform()
   if (platform === 'ios') {
     return [
-      'Chạm nút “aA” (hoặc biểu tượng ổ khoá) trên thanh địa chỉ.',
+      'Chạm nút “aA” (hoặc biểu tượng trang giấy) ở bên trái thanh địa chỉ.',
       'Chọn “Cài đặt trang web” → “Micro” → “Cho phép”.',
-      'Tải lại trang rồi bấm “Thổi bằng micro” lần nữa.',
+      'Nếu không thấy mục “Micro”: mở Cài đặt iPhone → Safari → “Camera & Micro” → chọn “Hỏi” hoặc “Cho phép”.',
+      'Đóng tab, mở lại link này rồi bấm “Thổi bằng micro”.',
     ]
   }
   if (platform === 'android') {
     return [
       'Chạm ổ khoá (hoặc nút “⋮”) cạnh địa chỉ web.',
       'Chọn “Quyền” → “Micro” → “Cho phép”.',
+      'Nếu vẫn không được: Cài đặt điện thoại → Ứng dụng → Chrome → Quyền → Micro → Cho phép.',
       'Tải lại trang rồi bấm “Thổi bằng micro” lần nữa.',
     ]
   }
   return [
     'Chạm biểu tượng ổ khoá cạnh địa chỉ.',
     'Bật “Micro” rồi tải lại trang.',
+    'Nếu vẫn không được: kiểm tra quyền micro của trình duyệt trong Cài đặt hệ điều hành.',
     'Bấm “Thổi bằng micro” lần nữa.',
   ]
 }
