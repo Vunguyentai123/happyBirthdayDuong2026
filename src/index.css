@@ -4939,6 +4939,95 @@ input:focus-visible,
   accent-color: var(--pink-deep);
 }
 
+/* Chọn ảnh cho tấm ảnh kỷ niệm: lưới thumbnail cuộn được, giữ thẻ không quá dài. */
+.recap-picker {
+  margin-top: 0.7rem;
+}
+
+.recap-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--ink);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.recap-picker-count {
+  flex: none;
+  min-width: 34px;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(178, 58, 94, 0.12);
+  color: var(--pink-deep);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.recap-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  max-height: 204px;
+  margin-top: 0.45rem;
+  padding: 2px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.recap-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 0.6rem;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.recap-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recap-photo.is-picked {
+  border-color: var(--pink-deep);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+  transform: scale(0.97);
+}
+
+.recap-photo-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pink-deep);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(74, 47, 39, 0.35);
+}
+
+.recap-picker-hint {
+  margin-top: 0.35rem;
+  color: var(--ink-soft);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .recap-make {
   margin-top: 0.65rem;
 }

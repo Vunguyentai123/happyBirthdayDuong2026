@@ -18,6 +18,11 @@ const SKY = '#8CCBEA'
 
 interface RecapOptions {
   wish?: Wish | null
+  /**
+   * Đường dẫn gốc của 2 ảnh khách chọn (ví dụ `/photos/abc.webp`), chưa qua
+   * `asset()`. Bỏ trống thì dùng 2 ảnh mặc định.
+   */
+  photos?: string[]
 }
 
 function loadImage(src: string): Promise<HTMLImageElement | null> {
@@ -83,11 +88,13 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines
 }
 
-function choosePhotos(): string[] {
-  const list = generatedPhotos.length > 0 ? generatedPhotos : ['/characters/usagi-08.png', '/characters/momonga-04.png']
-  const indexes = list.length >= 8 ? [0, 3, 5, 8] : [0, 1, 2, 3]
-  const chosen = indexes.map((i) => list[i % list.length])
-  return chosen.map((src) => asset(src))
+function defaultPhotoSources(): string[] {
+  const list =
+    generatedPhotos.length > 0
+      ? generatedPhotos
+      : ['/characters/usagi-08.png', '/characters/momonga-04.png']
+  const picks = list.length >= 4 ? [list[0], list[3]] : list.slice(0, 2)
+  return picks.length > 0 ? picks : ['/characters/usagi-08.png']
 }
 
 export async function createRecapImage(options: RecapOptions = {}): Promise<string> {
@@ -176,21 +183,28 @@ export async function createRecapImage(options: RecapOptions = {}): Promise<stri
   ctx.font = '700 28px "Baloo 2", sans-serif'
   ctx.fillText(`${status.full} · sinh nhật`, WIDTH / 2, 438)
 
-  // 4 ảnh polaroid
-  const photos = choosePhotos()
+  // 2 ảnh khách chọn. Ảnh dọc -> đặt cạnh nhau; ảnh ngang -> đặt trên dưới.
+  const chosen =
+    options.photos && options.photos.length > 0 ? options.photos : defaultPhotoSources()
+  const photos = chosen.slice(0, 2).map((src) => asset(src))
   const loaded = await Promise.all(photos.map(loadImage))
-  const frameW = 430
-  const frameH = 330
-  const gap = 26
-  const startX = (WIDTH - frameW * 2 - gap) / 2
-  const startY = 500
+  const landscapePair =
+    loaded.length > 1 &&
+    loaded.every((img) => img !== null && img.naturalWidth >= img.naturalHeight)
+
+  const cols = landscapePair ? 1 : 2
+  const rows = landscapePair ? 2 : 1
+  const frameW = landscapePair ? 524 : 470
+  const frameH = landscapePair ? 350 : 627
+  const gap = landscapePair ? 24 : 28
+  const startX = (WIDTH - (cols * frameW + (cols - 1) * gap)) / 2
+  const startY = landscapePair ? 476 : 500
+  const photosBottom = startY + rows * frameH + (rows - 1) * gap
 
   loaded.forEach((img, index) => {
-    const col = index % 2
-    const row = Math.floor(index / 2)
-    const x = startX + col * (frameW + gap)
-    const y = startY + row * (frameH + gap)
-    const tilt = index % 2 === 0 ? -0.022 : 0.02
+    const x = startX + (index % cols) * (frameW + gap)
+    const y = startY + Math.floor(index / cols) * (frameH + gap)
+    const tilt = index % 2 === 0 ? -0.018 : 0.016
 
     ctx.save()
     ctx.translate(x + frameW / 2, y + frameH / 2)
@@ -239,9 +253,10 @@ export async function createRecapImage(options: RecapOptions = {}): Promise<stri
     : content.photoNotes[8] ?? 'Một ngày rất đỗi bình thường, có em là thành ngày anh nhớ.'
   ctx.fillStyle = INK
   ctx.font = 'italic 500 30px "Playfair Display", Georgia, serif'
+  const quoteY = Math.min(1248, photosBottom + 56)
   const lines = wrapText(ctx, quote, WIDTH - 220).slice(0, 2)
   lines.forEach((line, index) => {
-    ctx.fillText(line, WIDTH / 2, 1242 + index * 38)
+    ctx.fillText(line, WIDTH / 2, quoteY + index * 38)
   })
 
   // Chân ảnh

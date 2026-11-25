@@ -8,10 +8,13 @@ import { Character } from '../components/Character'
 import { PageFrame, PageHead } from '../components/PaperPage'
 import { loadWish, type Wish } from '../lib/wish'
 import { createRecapImage, downloadRecap } from '../lib/recap'
+import { generatedPhotos } from '../data/photos.generated'
+import { asset } from '../data/assets'
 import { haptic, playSfx } from '../audio/sfx'
 
 // Trang 6: MÓN QUÀ — hộp 3D mở ra thành sổ coupon. Sau đó là tấm ảnh kỷ niệm
-// được ghép ngay trên máy: 4 ảnh + tên + tuổi + ngày + điều ước (tuỳ chọn).
+// được ghép ngay trên máy: 2 ảnh khách chọn + tên + tuổi + ngày + điều ước
+// (tuỳ chọn). Ảnh dọc xếp cạnh nhau, ảnh ngang xếp trên dưới.
 export function GiftScene({ lite }: { lite: boolean }) {
   const giftOpen = useSceneStore((s) => s.giftOpen)
   const setGiftOpen = useSceneStore((s) => s.setGiftOpen)
@@ -27,6 +30,23 @@ export function GiftScene({ lite }: { lite: boolean }) {
   const [recapLoading, setRecapLoading] = useState(false)
   const [recapError, setRecapError] = useState('')
   const [includeWish, setIncludeWish] = useState(false)
+  const [pickedPhotos, setPickedPhotos] = useState<string[]>(() => {
+    if (generatedPhotos.length === 0) return []
+    const picks = [generatedPhotos[0]]
+    const second = generatedPhotos[3] ?? generatedPhotos[1]
+    if (second) picks.push(second)
+    return picks
+  })
+
+  const toggleRecapPhoto = (photo: string) => {
+    setRecapError('')
+    setPickedPhotos((current) => {
+      if (current.includes(photo)) return current.filter((item) => item !== photo)
+      // Đã đủ 2 ảnh: ảnh vừa chạm thay ảnh chọn trước đó, luôn giữ đúng 2 ảnh.
+      if (current.length >= 2) return [current[current.length - 1] ?? photo, photo]
+      return [...current, photo]
+    })
+  }
 
   const openGift = () => {
     if (giftOpen) return
@@ -43,11 +63,15 @@ export function GiftScene({ lite }: { lite: boolean }) {
 
   const makeRecap = async () => {
     if (recapLoading) return
+    if (pickedPhotos.length !== 2) {
+      setRecapError('Chọn đủ 2 ảnh đã nhé.')
+      return
+    }
     setRecapLoading(true)
     setRecapError('')
     playSfx('paper', musicOn)
     try {
-      const data = await createRecapImage({ wish: includeWish ? wish : null })
+      const data = await createRecapImage({ wish: includeWish ? wish : null, photos: pickedPhotos })
       setRecap(data)
       playSfx('sparkle', musicOn)
       haptic(12, musicOn)
@@ -152,7 +176,7 @@ export function GiftScene({ lite }: { lite: boolean }) {
                 Quà mang về
               </span>
               <h2>Tấm ảnh của bữa tiệc hôm nay</h2>
-              <p>Bốn tấm ảnh, tên em, tuổi 17 và ngày 27.11. Lưu trên máy thôi.</p>
+              <p>Chọn 2 tấm ảnh em thích. Ảnh dọc xếp cạnh nhau, ảnh ngang xếp trên dưới.</p>
               {wish && (
                 <label className="recap-check">
                   <input
@@ -165,7 +189,51 @@ export function GiftScene({ lite }: { lite: boolean }) {
               )}
             </div>
 
-            <button type="button" className="paper-cta recap-make" onClick={makeRecap} disabled={recapLoading}>
+            {generatedPhotos.length > 0 && (
+              <div className="recap-picker">
+                <div className="recap-picker-head">
+                  <span>Chọn 2 ảnh đưa vào tấm vé</span>
+                  <span className="recap-picker-count" aria-live="polite">
+                    {pickedPhotos.length}/2
+                  </span>
+                </div>
+                <div className="recap-photo-grid" role="group" aria-label="Chọn 2 ảnh cho ảnh kỷ niệm">
+                  {generatedPhotos.map((photo, index) => {
+                    const order = pickedPhotos.indexOf(photo)
+                    const selected = order >= 0
+                    return (
+                      <button
+                        key={photo}
+                        type="button"
+                        className={`recap-photo${selected ? ' is-picked' : ''}`}
+                        aria-pressed={selected}
+                        aria-label={`${selected ? 'Bỏ chọn' : 'Chọn'} ảnh ${index + 1}`}
+                        onClick={() => toggleRecapPhoto(photo)}
+                      >
+                        <img src={asset(photo)} alt="" loading="lazy" />
+                        {selected && (
+                          <span className="recap-photo-badge" aria-hidden>
+                            {order + 1}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className="recap-picker-hint">
+                  {pickedPhotos.length === 2
+                    ? 'Ảnh dọc xếp cạnh nhau · ảnh ngang xếp trên dưới.'
+                    : 'Chạm thêm một ảnh nữa nhé.'}
+                </p>
+              </div>
+            )}
+
+            <button
+              type="button"
+              className="paper-cta recap-make"
+              onClick={makeRecap}
+              disabled={recapLoading || pickedPhotos.length !== 2}
+            >
               <Camera size={16} strokeWidth={2.6} aria-hidden />
               {recapLoading ? 'Đang ghép ảnh...' : 'Tạo ảnh kỷ niệm'}
             </button>
