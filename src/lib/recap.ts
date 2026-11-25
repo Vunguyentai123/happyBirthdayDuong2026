@@ -259,11 +259,6 @@ export async function createRecapImage(options: RecapOptions = {}): Promise<stri
     ctx.fillText(line, WIDTH / 2, quoteY + index * 38)
   })
 
-  // Chân ảnh
-  ctx.fillStyle = PINK
-  ctx.font = '700 25px "Baloo 2", sans-serif'
-  ctx.fillText('Usagi & Momonga có quà cho Chanh', WIDTH / 2, 1320)
-
   return canvas.toDataURL('image/png')
 }
 
