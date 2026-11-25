@@ -269,8 +269,10 @@ export function WishJar() {
                     type="button"
                     className="wish-jar-primary"
                     onClick={() => {
+                      // Mở ô viết mới thì để trống hẳn, không điền lại điều ước cũ:
+                      // khỏi phải bôi đen xoá tay. Điều ước cũ chỉ mất khi lưu cái mới.
                       setEditing(true)
-                      setDraft(wish?.text ?? '')
+                      setDraft('')
                       setNote('')
                     }}
                   >
