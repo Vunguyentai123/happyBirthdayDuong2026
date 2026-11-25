@@ -87,7 +87,7 @@ export function GiftScene({ lite }: { lite: boolean }) {
       <PageHead
         title="Sổ quà"
         accent="của Chanh"
-        sub="Ba tấm coupon nhỏ, đổi lúc nào cũng được."
+        sub="Hai tấm coupon nhỏ, đổi lúc nào cũng được."
       />
 
       <section className={`gift-stage ${giftOpen ? 'is-open' : ''}`} aria-label="Hộp quà">

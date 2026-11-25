@@ -180,18 +180,13 @@ Anh chúc em tuổi mới luôn khỏe mạnh, vui vẻ, đạt được mọi �
 
 Yêu em nhiều lắm! ❤️`,
   giftTitle: 'Sổ quà của Chanh',
-  giftBody: `Ba tấm coupon nhỏ, đổi lúc nào cũng được.
+  giftBody: `Hai tấm coupon nhỏ, đổi lúc nào cũng được.
 Hạn dùng: mãi mãi.`,
   giftCoupons: [
     {
       code: 'Q17-01',
       title: 'Một buổi đi chơi',
       body: 'Chanh chọn địa điểm, anh lo phần còn lại.',
-    },
-    {
-      code: 'Q17-02',
-      title: 'Một bữa ăn thật ngon',
-      body: 'Anh bao, Chanh chỉ cần chọn món.',
     },
     {
       code: 'Q17-03',
