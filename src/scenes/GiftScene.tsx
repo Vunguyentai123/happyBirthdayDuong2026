@@ -220,11 +220,6 @@ export function GiftScene({ lite }: { lite: boolean }) {
                     )
                   })}
                 </div>
-                <p className="recap-picker-hint">
-                  {pickedPhotos.length === 2
-                    ? 'Ảnh dọc xếp cạnh nhau · ảnh ngang xếp trên dưới.'
-                    : 'Chạm thêm một ảnh nữa nhé.'}
-                </p>
               </div>
             )}
 
