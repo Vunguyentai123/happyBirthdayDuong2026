@@ -37,7 +37,7 @@ async function main() {
         .rotate() // theo EXIF
         .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
         .webp({ quality: 80 })
-        .withMetadata({}) // xóa toàn bộ metadata incl. GPS
+        // Không gọi withMetadata(): sharp mặc định bỏ sạch EXIF/GPS khi xuất.
         .toFile(destPath)
       out.push(`/photos/${name}`)
       console.log(`OK ${f} -> ${name}`)
