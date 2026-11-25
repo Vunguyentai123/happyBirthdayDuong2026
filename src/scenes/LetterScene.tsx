@@ -15,7 +15,7 @@ export function LetterScene() {
 
   return (
     <PageFrame>
-      <PageHead title={content.letterTitle} sub="Momonga thức cả đêm để viết đó." />
+      <PageHead title={content.letterTitle} sub="Anh viết mấy dòng, em đọc chậm thôi nhé." />
 
       {!open ? (
         <div className="letter-stage">
@@ -47,7 +47,7 @@ export function LetterScene() {
       ) : (
         <article className="letter-paper anim-pop">
           <p className="letter-body">{visible}</p>
-          {done && <p className="letter-signature font-hand">Usagi &amp; Momonga</p>}
+          {done && <p className="letter-signature font-hand">Người luôn thương em</p>}
           {!done && (
             <button type="button" className="letter-more" onClick={showAll}>
               Hiện hết

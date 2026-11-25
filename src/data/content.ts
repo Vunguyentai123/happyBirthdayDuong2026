@@ -170,15 +170,15 @@ export const content: BirthdayContent = {
     'Còn nhiều tấm nữa, anh để dành chụp cùng em thật lâu.',
   ],
   letterTitle: 'Gửi Chanh tuổi 17',
-  letterBody: `Chanh thân mến,
+  letterBody: `Gửi Chanh yêu,
 
-Hôm nay em 17 tuổi rồi. Anh chẳng biết viết gì cho thật hay, chỉ biết là anh rất vui vì được ở đây, cùng em đi qua thêm một mùa sinh nhật nữa.
+Chúc mừng sinh nhật người đặc biệt nhất của anh! 🎂
 
-Cảm ơn em vì những ngày bình thường cũng hoá đáng nhớ. Cảm ơn em đã cười thật nhiều, đã ở lại, và đã là Chanh của anh.
+Cảm ơn em vì đã xuất hiện trong cuộc sống của anh, mang đến cho anh những nụ cười, sự ấm áp và cả những ngày bình yên bên nhau. Mỗi khoảnh khắc có em đều khiến anh thấy mình thật may mắn.
 
-Tuổi 17, chúc em thật khoẻ, thật vui, học hành thuận lợi và gặp được nhiều điều tử tế. Có chuyện gì buồn thì cứ kể anh nghe nhé.
+Anh chúc em tuổi mới luôn khỏe mạnh, vui vẻ, đạt được mọi điều mình mong muốn. Và dù mai sau thế nào, anh vẫn muốn là người ở bên cạnh, cùng em đi qua thật nhiều sinh nhật nữa.
 
-Sinh nhật vui vẻ, Chanh của anh.`,
+Yêu em nhiều lắm! ❤️`,
   giftTitle: 'Sổ quà của Chanh',
   giftBody: `Ba tấm coupon nhỏ, đổi lúc nào cũng được.
 Hạn dùng: mãi mãi.`,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSceneStore, sceneOrder } from '../store/useSceneStore'
 
 export function useSceneFlow() {
@@ -488,10 +488,13 @@ export function useHoldToBlow(durationMs = 1500, onDone?: () => void) {
 }
 
 // Chu hien dan kieu typewriter. reduced-motion -> hien ngay.
+// Tách theo code point (Array.from) để emoji không bị cắt đôi giữa chừng.
 export function useTypewriter(text: string, cps = 28) {
+  const chars = useMemo(() => Array.from(text), [text])
+  const total = chars.length
   const [shown, setShown] = useState(0)
   const [instant, setInstant] = useState(false)
-  const done = shown >= text.length
+  const done = shown >= total
 
   useEffect(() => {
     setShown(0)
@@ -501,16 +504,16 @@ export function useTypewriter(text: string, cps = 28) {
   useEffect(() => {
     if (done) return
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      setShown(text.length)
+      setShown(total)
       return
     }
     if (instant) {
-      setShown(text.length)
+      setShown(total)
       return
     }
-    const id = window.setTimeout(() => setShown((s) => Math.min(text.length, s + 1)), 1000 / cps)
+    const id = window.setTimeout(() => setShown((s) => Math.min(total, s + 1)), 1000 / cps)
     return () => window.clearTimeout(id)
-  }, [shown, text, cps, instant, done])
+  }, [shown, total, cps, instant, done])
 
-  return { visible: text.slice(0, shown), done, showAll: () => setInstant(true) }
+  return { visible: chars.slice(0, shown).join(''), done, showAll: () => setInstant(true) }
 }
