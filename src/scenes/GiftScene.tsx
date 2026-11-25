@@ -141,7 +141,7 @@ export function GiftScene({ lite }: { lite: boolean }) {
                   <div className="coupon-main">
                     <span className="coupon-code">{coupon.code}</span>
                     <h3>{coupon.title}</h3>
-                    <p>{coupon.body}</p>
+                    {coupon.body && <p>{coupon.body}</p>}
                   </div>
                   <div className="coupon-side" aria-hidden>
                     <span>Hạn dùng</span>
