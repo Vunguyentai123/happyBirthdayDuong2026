@@ -109,9 +109,7 @@ export function LockScene() {
             <span className="gate-title-em">dành cho {content.nickname}</span>
           </h1>
           <p className="gate-sub">
-            {opened
-              ? 'Vé hợp lệ. Bữa tiệc bắt đầu!'
-              : 'Hôm nay cửa chỉ mở một lần. Đưa vé cho Momonga nhé.'}
+            {opened ? 'Vé hợp lệ. Bữa tiệc bắt đầu!' : 'Đưa vé cho Momonga nhé.'}
           </p>
         </header>
 
