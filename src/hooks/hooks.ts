@@ -65,9 +65,6 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
   autoGainControl: false,
 }
 
-// Chỉ tự xin quyền một lần mỗi phiên (đóng tab là reset) để không làm phiền.
-let autoAsked = false
-
 // Trạng thái quyền micro, nếu trình duyệt cho biết (Chrome có, Safari thường không).
 async function micPermissionState(): Promise<'granted' | 'denied' | 'prompt' | 'unknown'> {
   try {
@@ -105,8 +102,12 @@ export function prewarmMic(): void {
   if (!prewarmCtx) {
     const Ctor = audioCtor()
     if (Ctor) {
-      prewarmCtx = new Ctor()
-      void prewarmCtx.resume().catch(() => {})
+      try {
+        prewarmCtx = new Ctor()
+        void prewarmCtx.resume().catch(() => {})
+      } catch {
+        prewarmCtx = null
+      }
     }
   }
   let p: Promise<MediaStream>
@@ -385,15 +386,34 @@ export function useMicBlow(onBlow: () => void) {
     void start(false)
   }, [start])
 
+  // Hỏi quyền NGAY trong một cú chạm. iPhone/Safari chỉ chịu hiện hộp thoại
+  // "Cho phép micro?" khi getUserMedia nằm trong cử chỉ chạm; gọi trong timer
+  // sẽ bị từ chối im lặng và khách tưởng phải vào Cài đặt. Màn thổi nến gọi
+  // hàm này ở lần chạm đầu tiên, nên khách chỉ cần bấm "Cho phép".
+  const ask = useCallback(() => {
+    if (st.current.stream || st.current.pending) return
+    void start(true)
+  }, [start])
+
   const closeHelp = useCallback(() => setHelpOpen(false), [])
   const openHelp = useCallback(() => setHelpOpen(true), [])
 
   // Xin quyền TỰ ĐỘNG khi vừa vào màn thổi nến: khách chỉ cần bấm "Cho phép"
-  // trong hộp thoại của điện thoại. Nếu máy đã từ chối từ trước thì không hỏi
-  // lại (trình duyệt cũng không hiện hộp thoại nữa), chỉ nhắc nhẹ trong khay.
+  // trong hộp thoại của điện thoại. Trường hợp đã cấp quyền từ trước thì mở
+  // micro luôn, không hỏi lại.
   const autoStart = useCallback(async () => {
     if (st.current.stream || st.current.pending) return
+    // Đã xin sẵn từ cú chạm ở màn trước: hộp thoại đã hiện (hoặc quyền đã có),
+    // dùng tiếp luồng đó, không hỏi thêm lần nữa.
+    if (prewarm) {
+      void start(true)
+      return
+    }
     const state = await micPermissionState()
+    if (state === 'granted') {
+      void start(true)
+      return
+    }
     if (state === 'denied') {
       const inApp = isInAppBrowser()
       setProblem(inApp ? 'in-app' : 'denied')
@@ -404,12 +424,11 @@ export function useMicBlow(onBlow: () => void) {
       )
       return
     }
-    // Chỉ tự hỏi một lần mỗi phiên; đã cấp quyền rồi thì lần nào vào cũng bật.
-    if (state !== 'granted') {
-      if (autoAsked) return
-      autoAsked = true
-    }
-    void start(true)
+    // 'prompt'/'unknown': KHÔNG gọi getUserMedia trong timer trên iPhone —
+    // Safari chỉ hiện hộp thoại cấp quyền khi lời gọi nằm trong cử chỉ chạm,
+    // nên để màn thổi nến hỏi ở lần chạm đầu tiên (xem `ask`). Android/Chrome
+    // cho hỏi ngoài cử chỉ nên thử luôn cho khách khỏi phải chạm thêm.
+    if (micPlatform() === 'android') void start(true)
   }, [start])
 
   // Khách ra Cài đặt bật quyền rồi quay lại tab: tự mở micro luôn, khỏi bấm lại.
@@ -429,7 +448,7 @@ export function useMicBlow(onBlow: () => void) {
     }
   }, [start])
 
-  return { on, level, fill, note, problem, helpOpen, toggle, stop, retry, closeHelp, openHelp, autoStart }
+  return { on, level, fill, note, problem, helpOpen, toggle, stop, retry, closeHelp, openHelp, autoStart, ask }
 }
 
 // Bam va giu ~1.5s de thoi nen. Tra ve {holding, progress, done, start, cancel}

@@ -69,14 +69,37 @@ export function CandleScene({ lite }: { lite: boolean }) {
   const { holding, progress: holdProgress, start, cancel } = useHoldToBlow(1500, blowOut)
   const mic = useMicBlow(blowOut)
   const autoStartMic = mic.autoStart
+  const askMic = mic.ask
 
   // Vào màn là tự xin quyền micro: khách chỉ cần bấm "Cho phép" trong hộp thoại
-  // của điện thoại. Chờ 0,6s cho cảnh hiện xong rồi mới hỏi, đỡ giật mình.
+  // của điện thoại, không phải vào Cài đặt. Máy đã cấp quyền thì micro mở luôn;
+  // máy chưa từng hỏi thì lần chạm đầu tiên trên màn này sẽ bung hộp thoại gốc
+  // của trình duyệt (iPhone/Safari chỉ cho gọi getUserMedia trong cử chỉ chạm).
   useEffect(() => {
     if (wishBlown) return
     const id = window.setTimeout(() => void autoStartMic(), 600)
-    return () => window.clearTimeout(id)
-  }, [autoStartMic, wishBlown])
+
+    const cleanup = () => {
+      window.removeEventListener('pointerdown', onTap, true)
+      window.removeEventListener('keydown', onTap, true)
+    }
+    const isUi = (target: EventTarget | null) =>
+      target instanceof Element &&
+      !!target.closest('button, a, input, textarea, select, [role="button"]')
+    function onTap(event: Event) {
+      // Nút micro tự xin quyền trong onClick của nó; bỏ qua để không giành lượt.
+      if (isUi(event.target)) return
+      cleanup()
+      void askMic()
+    }
+    window.addEventListener('pointerdown', onTap, true)
+    window.addEventListener('keydown', onTap, true)
+
+    return () => {
+      window.clearTimeout(id)
+      cleanup()
+    }
+  }, [askMic, autoStartMic, wishBlown])
 
   // Nền sáng dần theo hơi thổi; nhả tay hoặc tắt micro giữa chừng thì trả về 0.
   useEffect(() => {
