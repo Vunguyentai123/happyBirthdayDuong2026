@@ -9,11 +9,8 @@ import { Cupcakes } from './backdrop/objects/Cupcakes'
 import { Gifts } from './backdrop/objects/Gifts'
 import { HeartBalloons } from './backdrop/objects/HeartBalloons'
 import { HeartField } from './backdrop/objects/HeartField'
-import { LoveLetters } from './backdrop/objects/LoveLetters'
 import { PartyHats } from './backdrop/objects/PartyHats'
-import { Pearls } from './backdrop/objects/Pearls'
 import { RibbonBows } from './backdrop/objects/RibbonBows'
-import { Rings } from './backdrop/objects/Rings'
 import { Stars } from './backdrop/objects/Stars'
 
 // Nền 3D dùng chung cho cả web. File này chỉ điều phối:
@@ -43,11 +40,8 @@ export function Backdrop3D({ quality = 1 }: { quality?: number }) {
       <Stars quality={quality} speed={speed} />
       <Gifts quality={quality} speed={speed} />
       <Cupcakes quality={quality} speed={speed} />
-      <LoveLetters quality={quality} speed={speed} />
       <RibbonBows quality={quality} speed={speed} />
       <PartyHats quality={quality} speed={speed} />
-      <Rings quality={quality} speed={speed} />
-      <Pearls quality={quality} speed={speed} />
     </group>
   )
 }

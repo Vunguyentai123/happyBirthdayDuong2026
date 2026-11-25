@@ -10,8 +10,9 @@ export interface SceneStore {
   giftOpen: boolean
   unlocked: boolean
   musicOn: boolean
+  duckMusic: boolean // hạ nhạc nền khi phát nhạc hộp sinh nhật
   trackIndex: number
-  gatePassed: boolean // tra loi dung ca 3 cau man khoa
+  gatePassed: boolean // đã check-in vé ở màn cổng
   setScene: (s: SceneId) => void
   next: () => void
   prev: () => void
@@ -21,6 +22,7 @@ export interface SceneStore {
   setGiftOpen: (v: boolean) => void
   setUnlocked: (v: boolean) => void
   setMusicOn: (v: boolean) => void
+  setDuckMusic: (v: boolean) => void
   nextTrack: () => void
   setGatePassed: (v: boolean) => void
 }
@@ -32,6 +34,7 @@ export const useSceneStore = create<SceneStore>((set) => ({
   giftOpen: false,
   unlocked: false,
   musicOn: false,
+  duckMusic: false,
   trackIndex: 0,
   gatePassed: false,
   setScene: (scene) => set({ scene, progress: 0 }),
@@ -49,12 +52,22 @@ export const useSceneStore = create<SceneStore>((set) => ({
       if (i <= 1) return s
       return { scene: sceneOrder[i - 1], progress: 0 }
     }),
-  restart: () => set({ scene: 'lock', progress: 0, wishBlown: false, giftOpen: false, unlocked: false, gatePassed: false }),
+  restart: () =>
+    set({
+      scene: 'lock',
+      progress: 0,
+      wishBlown: false,
+      giftOpen: false,
+      unlocked: false,
+      gatePassed: false,
+      duckMusic: false,
+    }),
   setProgress: (progress) => set({ progress }),
   setWishBlown: (wishBlown) => set({ wishBlown }),
   setGiftOpen: (giftOpen) => set({ giftOpen }),
   setUnlocked: (unlocked) => set({ unlocked }),
   setMusicOn: (musicOn) => set({ musicOn }),
+  setDuckMusic: (duckMusic) => set({ duckMusic }),
   nextTrack: () => set((s) => ({ trackIndex: s.trackIndex + 1 })),
   setGatePassed: (gatePassed) => set({ gatePassed }),
 }))

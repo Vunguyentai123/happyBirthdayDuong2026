@@ -28,28 +28,62 @@ export interface GateQuiz {
   questions: GateChoiceQuestion[]
 }
 
+export interface GiftCoupon {
+  code: string
+  title: string
+  body: string
+}
+
+export interface BirthdayTicket {
+  eyebrow: string
+  title: string
+  subtitle: string
+  code: string
+  note: string
+}
+
 export interface BirthdayContent {
   name: string
   nickname: string
   age: number
+  /** Ngày sinh nhật dạng YYYY-MM-DD, dùng để tính "còn X ngày" theo giờ máy. */
+  birthdayISO: string
+  birthdayLabel: string
+  ticket: BirthdayTicket
   gateQuiz: GateQuiz
   usagiLines: DialogueSet
   momongaLines: DialogueSet
   photoCaptions: string[]
+  /** Câu dài cho alt text / khung phóng to / ảnh kỷ niệm cuối. */
+  photoNotes: string[]
   letterTitle: string
   letterBody: string
   giftTitle: string
   giftBody: string
+  giftCoupons: GiftCoupon[]
   musicSrc: string
   /** Danh sách nhạc nền; rỗng/không có thì dùng musicSrc */
   musicPlaylist?: string[]
+  /** Nhãn bài hát, hiện trong tooltip/aria-label của nút nhạc. */
+  musicTitles?: string[]
 }
 
 export const content: BirthdayContent = {
   name: 'Duong',
   nickname: 'Chanh',
   age: 17,
+  birthdayISO: '2026-11-27',
+  birthdayLabel: '27.11.2026',
 
+  ticket: {
+    eyebrow: 'Thiệp mời',
+    title: 'Bữa tiệc của Chanh',
+    subtitle: 'VIP · 17 tuổi · Một người duy nhất',
+    code: 'Mã vé: 17',
+    note: 'Xuất trình vé cho Momonga ở cửa nhé.',
+  },
+
+  // Giữ lại bộ câu hỏi cũ để sau này dùng như một "câu đố phụ" trong album.
   gateQuiz: {
     questions: [
       {
@@ -82,7 +116,7 @@ export const content: BirthdayContent = {
     ],
     unlock: ['YAHA! Đúng rồi! Cửa mở! Vào nhanh!', 'Yaha! Chanh giỏi quá! Đi tiếp thôi!'],
     greeting: [
-      'Chúc mừng sinh nhật Dương 17 tuổi! Yaha!',
+      'Chúc mừng sinh nhật Chanh 17 tuổi! Yaha!',
       'Yaha! Hôm nay Chanh là nhất rồi!',
     ],
     blowCandle: [
@@ -112,9 +146,28 @@ export const content: BirthdayContent = {
   },
 
   photoCaptions: [
-    'Khoảnh khắc đáng yêu nhất',
-    'Cười tươi như nắng',
-    'Ngày mình ở bên nhau',
+    'Có em là đủ.',
+    'Cười là cả ngày sáng.',
+    'Chiều không hẹn trước.',
+    'Chanh tuổi 17.',
+    'Chụp lén mà thương.',
+    'Thêm một mùa, vẫn em.',
+    'Đẹp nhất khung hình.',
+    'Trong ảnh có em.',
+    'Ngày thường đáng nhớ.',
+    'Để dành chụp cùng em.',
+  ],
+  photoNotes: [
+    'Ngày đầu tiên anh biết, có một người làm mọi thứ dịu lại.',
+    'Cười thế này thôi, cả ngày của anh đã sáng rồi.',
+    'Một buổi chiều không hẹn trước, mà anh nhớ mãi.',
+    'Chanh của tuổi 17, và là người anh thương nhất.',
+    'Tấm này anh chụp lén, vì không nỡ bỏ lỡ.',
+    'Thêm một mùa nữa, anh vẫn chọn đi cùng em.',
+    'Không cần dàn dựng, em đã là điều đẹp nhất trong khung hình.',
+    'Nhìn lại vẫn thấy vui, vì trong ảnh có em.',
+    'Một ngày rất đỗi bình thường, có em là thành ngày anh nhớ.',
+    'Còn nhiều tấm nữa, anh để dành chụp cùng em thật lâu.',
   ],
   letterTitle: 'Gửi Chanh tuổi 17',
   letterBody: `Chanh thân mến,
@@ -125,18 +178,30 @@ Cảm ơn em vì những ngày bình thường cũng hoá đáng nhớ. Cảm ơ
 
 Tuổi 17, chúc em thật khoẻ, thật vui, học hành thuận lợi và gặp được nhiều điều tử tế. Có chuyện gì buồn thì cứ kể anh nghe nhé.
 
-Sinh nhật vui vẻ, Chanh của anh.
-
-Usagi & Momonga`,
-  giftTitle: 'Hộp quà của Usagi & Momonga',
-  giftBody: `Một buổi đi chơi do Chanh chọn địa điểm.
-Một bữa ăn thật ngon, anh bao.
-Một tấm ảnh mới cho album này.
-Và một điều ước nữa, để dành cho lần sau.
-
+Sinh nhật vui vẻ, Chanh của anh.`,
+  giftTitle: 'Sổ quà của Chanh',
+  giftBody: `Ba tấm coupon nhỏ, đổi lúc nào cũng được.
 Hạn dùng: mãi mãi.`,
+  giftCoupons: [
+    {
+      code: 'Q17-01',
+      title: 'Một buổi đi chơi',
+      body: 'Chanh chọn địa điểm, anh lo phần còn lại.',
+    },
+    {
+      code: 'Q17-02',
+      title: 'Một bữa ăn thật ngon',
+      body: 'Anh bao, Chanh chỉ cần chọn món.',
+    },
+    {
+      code: 'Q17-03',
+      title: 'Một điều ước để dành',
+      body: 'Giữ đến lúc Chanh cần nhất.',
+    },
+  ],
   musicSrc: asset('/audio/bai1.mp3'),
   musicPlaylist: [asset('/audio/bai1.mp3'), asset('/audio/bai2.mp3')],
+  musicTitles: ['Bài 1', 'Bài 2'],
 }
 
 export function pickRandom(lines: string[]): string {

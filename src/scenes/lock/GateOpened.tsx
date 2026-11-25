@@ -87,7 +87,7 @@ export function GateOpened({
         <button
           type="button"
           onClick={onNext}
-          className="group inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full border border-white/80 bg-[#FFB4CB] px-4 text-[12px] font-extrabold text-[#5C1B33] shadow-[0_16px_30px_-16px_rgba(214,92,128,.9),inset_0_1px_0_rgba(255,255,255,.9)] transition hover:bg-[#FFC6D8] active:scale-[0.985] sm:h-11 sm:px-6 sm:text-[12.5px]"
+          className="gate-next group inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full px-5 text-[12.5px] font-extrabold transition active:scale-[0.985] sm:h-12 sm:px-7"
         >
           Vào tiệc thôi
           <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />

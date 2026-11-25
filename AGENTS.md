@@ -7,15 +7,22 @@ Web chúc mừng sinh nhật tặng một bạn 17 tuổi (Dương, biệt danh 
 - Giao tiếp với tôi bằng tiếng Việt. Code, tên biến, comment kỹ thuật bằng tiếng Anh. Nội dung hiển thị trên web bằng tiếng Việt có dấu đầy đủ.
 
 ## Stack và version (BẮT BUỘC khớp nhau, tránh lỗi lệch version)
-- Vite 5.x, @vitejs/plugin-react 4.x, React 18.3.x, TypeScript.
-- three, @react-three/fiber 8.x, @react-three/drei 9.x, @react-three/postprocessing 2.x (nếu dùng). Đây là bộ đi cùng React 18. KHÔNG dùng fiber 9.x/drei 10.x vì chúng đi với React 19.
-- @types/three phải cùng phiên bản với three.
-- framer-motion 11.x, Tailwind CSS 3.4.x, zustand 4.5.x, canvas-confetti 1.9.x, sharp 0.33.x (chỉ cho script xử lý ảnh).
-- Trước khi cài MỌI package: chạy `node -v` và `npm view <pkg> peerDependencies engines`, chọn version thỏa tất cả peer deps. Ghim version chính xác trong package.json (không dùng `^` hay `~` cho three, @react-three/*, @types/three).
+- Node `^20.19.0 || >=22.12.0` (Vite 8). Máy hiện tại: Node 22.20.0.
+- Vite 8.3.x, @vitejs/plugin-react 6.1.x, React 19.3.x, TypeScript 7.0.x.
+- three 0.186.x, @react-three/fiber 9.8.x, @react-three/drei 10.7.x. Đây là bộ đi cùng React 19; fiber yêu cầu `react >=19 <19.4`.
+- @types/three phải cùng phiên bản với three (0.186.x).
+- Tailwind CSS 4.3.x + @tailwindcss/vite 4.3.x, zustand 5.0.x, canvas-confetti 1.9.x, sharp 0.35.x (chỉ cho script xử lý ảnh), lucide-react 1.57.x.
+- Font tự host: @fontsource/baloo-2 5.2.5, @fontsource/playfair-display 5.3.0, @fontsource/caveat 5.3.0.
+- framer-motion và @react-three/postprocessing hiện KHÔNG dùng. Nếu thêm, phải kiểm tra peer React 19 trước.
+- KHÔNG nâng React lên 19.4+ khi fiber chưa hỗ trợ.
+- Trước khi cài MỌI package: chạy `node -v` và `npm view <pkg> peerDependencies engines`, chọn version thỏa tất cả peer deps. Ghim version chính xác trong package.json (không dùng `^` hay `~`).
 - Nếu có xung đột peer dependency: DỪNG và báo tôi. Không dùng `--force` hay `--legacy-peer-deps`.
 
 ## Quyền riêng tư (rất quan trọng)
 - Không analytics, không tracker, không gửi dữ liệu ra ngoài. Tự host font và asset khi có thể.
+- Ngoại lệ duy nhất, do chủ project yêu cầu: nội dung hũ điều ước được ghi thêm một bản sao lưu
+  riêng tư lên Firebase Realtime Database (`src/lib/wishSync.ts`, `database.rules.json`). Client
+  chỉ ghi, rules chặn đọc. Không mở rộng ngoại lệ này sang dữ liệu nào khác.
 - Có `<meta name="robots" content="noindex,nofollow">`.
 - Ảnh cá nhân luôn đi qua `scripts/prepare-photos.mjs` (xóa EXIF/GPS, resize, đổi tên ngẫu nhiên). Thư mục `photos-source/` nằm trong `.gitignore`.
 - Không bao giờ commit mật khẩu dạng chữ thường; chỉ lưu SHA-256 hash. Màn khóa chỉ là chắn nhẹ, không phải bảo mật thật.

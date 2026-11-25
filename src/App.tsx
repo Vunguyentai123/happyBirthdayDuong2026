@@ -6,6 +6,7 @@ import { MusicPlayer } from './components/MusicPlayer'
 import { useLiteFallback } from './hooks/hooks'
 import { usagiHopFrames, momongaRoles } from './data/characters'
 import { asset } from './data/assets'
+import { unlockAudio } from './audio/sfx'
 
 const CanvasRoot = lazy(() => import('./three/CanvasRoot').then((m) => ({ default: m.CanvasRoot })))
 
@@ -23,6 +24,18 @@ export default function App() {
   const lite = useLiteFallback()
   const [progress, setProgress] = useState(0)
   const [ready, setReady] = useState(false)
+
+  // Trình duyệt chỉ cho phát âm thanh sau một cử chỉ thật. Mở AudioContext ở
+  // lần chạm/phím đầu tiên để nhạc hộp và SFX dùng lại được ngay sau đó.
+  useEffect(() => {
+    const unlock = () => unlockAudio()
+    window.addEventListener('pointerdown', unlock, { once: true })
+    window.addEventListener('keydown', unlock, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+    }
+  }, [])
 
   useEffect(() => {
     let done = 0

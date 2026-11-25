@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "wishes": {
+      ".read": false,
+      "$clientId": {
+        ".write": "$clientId.matches(/^[A-Za-z0-9-]{16,64}$/) && newData.exists()",
+        ".validate": "newData.hasChildren(['text', 'createdAt', 'updatedAt', 'client']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 120 && newData.child('createdAt').isString() && newData.child('createdAt').val().length >= 20 && newData.child('createdAt').val().length <= 40 && newData.child('updatedAt').isString() && newData.child('updatedAt').val().length >= 20 && newData.child('updatedAt').val().length <= 40 && newData.child('client').isString() && newData.child('client').val() === $clientId && (!newData.hasChild('deletedAt') || (newData.child('deletedAt').isString() && newData.child('deletedAt').val().length >= 20 && newData.child('deletedAt').val().length <= 40))"
+      }
+    }
+  }
+}

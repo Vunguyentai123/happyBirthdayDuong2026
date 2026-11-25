@@ -13,6 +13,7 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
 
   const playlist = content.musicPlaylist?.length ? content.musicPlaylist : [content.musicSrc]
   const trackNo = (trackIndex % playlist.length) + 1
+  const trackName = content.musicTitles?.[trackIndex % playlist.length] ?? `Bài ${trackNo}`
   const nextSong = () => {
     nextTrack()
     if (!musicOn) setMusicOn(true)
@@ -27,11 +28,11 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
           aria-label={musicOn ? 'Tắt nhạc nền' : 'Bật nhạc nền'}
           title={
             musicOn
-              ? `Tắt nhạc nền (đang phát bài ${trackNo}/${playlist.length})`
-              : `Bật nhạc nền (bài ${trackNo}/${playlist.length})`
+              ? `Tắt nhạc nền (đang phát ${trackName}, bài ${trackNo}/${playlist.length})`
+              : `Bật nhạc nền (${trackName}, bài ${trackNo}/${playlist.length})`
           }
           className={`music-disc relative grid h-[54px] w-[54px] place-items-center rounded-full border transition active:scale-95 ${
-            musicOn ? 'is-playing text-[#9C2F52]' : 'text-[#C0738A]'
+            musicOn ? 'is-playing text-[#B23A5E]' : 'text-[#C77A8F]'
           }`}
         >
           <span aria-hidden className={`music-grooves ${musicOn ? 'is-spinning' : ''}`} />
@@ -49,7 +50,7 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
             onClick={nextSong}
             aria-label={`Bài tiếp theo, đang phát bài ${trackNo}/${playlist.length}`}
             title={`Bài tiếp theo (${trackNo}/${playlist.length})`}
-            className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border border-[#C9A25D]/55 bg-[#FFF9EE] text-[#6B2336] shadow-[0_5px_12px_-7px_rgba(59,27,41,.9),inset_0_1px_0_rgba(255,255,255,.9)] transition hover:bg-white active:scale-90"
+            className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border border-[#E7C77B] bg-[#FFF9EE] text-[#5A2E2A] shadow-[0_5px_12px_-7px_rgba(74,47,39,.9),inset_0_1px_0_rgba(255,255,255,.9)] transition hover:bg-white active:scale-90"
           >
             <SkipForward size={10} strokeWidth={3} />
           </button>

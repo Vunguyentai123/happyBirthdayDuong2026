@@ -31,6 +31,11 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+        env:
+          # URL Realtime Database: khai báo trong Settings > Secrets and variables
+          # > Actions. Không có secret thì hũ điều ước chỉ lưu trên máy.
+          VITE_FIREBASE_DB_URL: ${{ secrets.VITE_FIREBASE_DB_URL }}
+          VITE_FIREBASE_WISH_PATH: wishes
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

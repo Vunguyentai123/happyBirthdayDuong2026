@@ -1,18 +1,20 @@
 Usagi & Momonga có quà cho Chanh
-Web chúc mừng sinh nhật Chanh (Dương), 17 tuổi. Hành trình gồm 6 màn đi một chiều, hai nhân vật
-Usagi và Momonga dẫn chuyện suốt. Đi hết là nhận đủ quà. Toàn bộ nội dung (lời thoại, chú thích
-ảnh, thư, quà, nhạc) nằm trong một file: `src/data/content.ts`.
+Web chúc mừng sinh nhật Chanh (Dương), 17 tuổi, sinh nhật **27.11.2026**. Hành trình gồm 6 màn
+đi một chiều, hai nhân vật Usagi và Momonga dẫn chuyện suốt. Đi hết là nhận đủ quà và một tấm
+ảnh kỷ niệm tải về. Toàn bộ nội dung (lời thoại, chú thích ảnh, thư, quà, nhạc) nằm trong
+`src/data/content.ts`.
 Trình tự màn hình
 #	Màn	id (store)	Việc chính
-1	Cổng	`lock`	Trả lời đúng câu hỏi để mở cửa
-2	Thiệp chúc	`greeting`	Lời chúc từ hai nhân vật, bật nhạc
-3	Thổi nến	`candle`	Bánh 3D, giữ nút hoặc thổi micro để ước
-4	Album	`photos`	Polaroid tự trượt, bấm để phóng to
+1	Thiệp mời	`lock`	Momonga soát vé, Chanh bấm check-in để mở cửa
+2	Hero sinh nhật	`greeting`	Tên + tuổi 17 + ngày 27.11, bật nhạc, vào tiệc
+3	Thổi nến	`candle`	Bánh 3D, thổi bằng nút giữ hoặc micro, rồi thả điều ước vào hũ
+4	Album	`photos`	Polaroid vuốt tay (không tự chạy), bấm để phóng to
 5	Thư	`letter`	Mở phong bì, chữ hiện dần
-6	Hộp quà	`gift`	Hộp quà 3D mở nắp, lời tạm biệt, chơi lại
-Chỉ đi tiếp bằng nút trên từng màn, không có nút quay lại. "Xem lại từ đầu" ở màn 6 là điểm
-restart duy nhất. State chỉ sống trong bộ nhớ tab (Zustand, không dùng localStorage), tải lại trang
-là về màn 1.
+6	Sổ quà	`gift`	Hộp 3D mở ra 3 coupon + tạo ảnh kỷ niệm, chơi lại
+Chỉ đi tiếp bằng nút trên từng màn; từ màn 3 có nút "Màn trước". "Xem lại từ đầu" ở màn 6 là
+điểm restart duy nhất. State hành trình sống trong bộ nhớ tab (Zustand); riêng điều ước lưu
+`localStorage` (kèm bản sao lưu riêng tư trên Firebase, xem mục cuối) để quay lại vẫn còn;
+tải lại trang thì về màn 1.
 Chạy và build
 ```bash
 npm install
@@ -22,6 +24,37 @@ npm run preview
 ```
 Deploy thư mục `dist/` lên Netlify, Vercel, Cloudflare hoặc hosting tĩnh bất kỳ. Micro chỉ hoạt
 động trên `https://` hoặc `localhost`.
+
+Hũ điều ước → Firebase Realtime Database (riêng tư)
+- Bật Realtime Database trong Firebase Console, copy data URL rồi điền vào `.env.local`
+  (`VITE_FIREBASE_DB_URL=https://<project>-default-rtdb...firebasedatabase.app`). Không có URL
+  thì web vẫn chạy bình thường, điều ước chỉ nằm trên máy.
+- Dán nội dung `database.rules.json` vào tab Rules → Publish. Rules cho ghi vào
+  `/wishes/<clientId>` nhưng chặn `.read` toàn bộ, nên người lạ không đọc được điều ước.
+- Đọc lại: Firebase Console → Realtime Database → nhánh `wishes` (console bỏ qua rules).
+- GitHub Pages: thêm secret `VITE_FIREBASE_DB_URL` trong Settings → Secrets and variables →
+  Actions; workflow `.github/workflows/deploy.yml` đã truyền biến này lúc build.
+- URL database nằm trong bundle nên không phải bí mật; thứ bảo vệ dữ liệu là rules. Client
+  chỉ PUT, không bao giờ GET.
+- Chanh bấm xoá: bản trên máy mất, bản trên Firebase vẫn giữ `text` cũ kèm `deletedAt`.
+- Mất mạng: bản ghi nằm trong hàng đợi `chanh:wish:queue:v1` và tự gửi lại lần mở sau.
+
+---
+Bản sinh nhật 2026 (thay cho bản cổng đố cũ)
+- Vé VIP + check-in thay câu hỏi kỷ niệm. Bộ câu hỏi cũ vẫn nằm trong `content.gateQuiz`
+  để sau này dùng làm câu đố phụ, nhưng màn 1 không còn dùng.
+- Hero mới: HAPPY BIRTHDAY + Chanh + 17 + badge 27.11, bật nhạc và vào tiệc.
+- Hũ điều ước: sau khi thổi nến, Chanh viết tối đa 120 ký tự; lưu `localStorage`
+  (`chanh:wish:v1`) và ghi một bản sao lưu riêng tư lên Firebase Realtime Database
+  (client chỉ ghi, rules chặn đọc). Giao diện chỉ nói "của riêng em", có nút xoá.
+- Album không tự trượt; caption ngắn in dưới polaroid, câu dài dùng cho `alt` và khung zoom.
+- Sổ quà: 3 coupon (đi chơi, bữa ăn, điều ước để dành) + ảnh kỷ niệm 1080×1350 ghép
+  bằng canvas ngay trên máy. Ảnh có thể in kèm điều ước nếu Chanh tick chọn.
+- Âm thanh: Web Audio tổng hợp nhạc hộp Happy Birthday (khi bật nhạc) + SFX giấy/dấu vé/
+  ruy băng. Không thêm file âm thanh mới, không gọi mạng.
+- Loader có 5 bóng bay bấm được để giết thời gian chờ.
+- Bảng màu chuyển từ burgundy/gold sang giấy kem + mực nâu + bơ/hồng/mint/trời; thêm font
+  viết tay Caveat cho caption.
 ---
 Nguyên tắc giao diện (áp dụng cho cả 6 màn)
 Mục tiêu: cả web nhìn như một thế giới 3D đồ chơi sinh nhật của hai nhân vật, không phải một
@@ -89,6 +122,9 @@ nút, hạt kim cương trang trí, nhẫn 3D, nấm 3D.
 Khung vòm bao quanh Usagi ở màn 2, dải bunting nếu thấy rối.
 ---
 Chi tiết từng màn
+> Các mục 1-6 dưới đây ghi lại bản giao diện cũ (cổng đố, chưa có hũ điều ước/recap).
+> Phần "Bản sinh nhật 2026" ở trên là mô tả đúng của bản hiện tại; các mục dưới đây
+> vẫn hữu ích cho token, nhân vật và các lưu ý kỹ thuật.
 1. Cổng (`lock`): `src/scenes/LockScene.tsx`
 Bố cục
 Desktop (từ 1024px): cửa bên trái, thẻ câu hỏi bên phải. Mobile: một cột, thẻ nằm dưới cửa.
@@ -255,7 +291,9 @@ Kiểm tra
 Xem thật trên điện thoại ở bề ngang 433px, nhất là màn 1 sau khi mở cửa.
 Thử micro trên `https://` hoặc `localhost` thật (ngưỡng phát hiện hơi thổi, thông báo lỗi quyền).
 Công nghệ
-React 19, TypeScript, Vite, Tailwind CSS 4, Zustand, React Three Fiber + drei, canvas-confetti,
-lucide-react. Font tự host: Baloo 2 và Playfair Display.
+React 19.3, TypeScript 7, Vite 8, Tailwind CSS 4.3, Zustand 5, React Three Fiber 9 + drei 10,
+canvas-confetti, lucide-react. Font tự host: Baloo 2, Playfair Display và Caveat.
+Các file mới của bản sinh nhật: `src/components/BirthdayTicket.tsx`, `src/scenes/candle/WishJar.tsx`,
+`src/lib/birthday.ts`, `src/lib/wish.ts`, `src/lib/recap.ts`, `src/audio/sfx.ts`.
 > Chunk `CanvasRoot` (~1MB) được lazy-load riêng, chỉ tải khi trình duyệt có WebGL. Cảnh báo
 > "chunk size > 500kB" của Vite là bình thường, không phải lỗi.

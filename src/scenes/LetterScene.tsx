@@ -47,6 +47,7 @@ export function LetterScene() {
       ) : (
         <article className="letter-paper anim-pop">
           <p className="letter-body">{visible}</p>
+          {done && <p className="letter-signature font-hand">Usagi &amp; Momonga</p>}
           {!done && (
             <button type="button" className="letter-more" onClick={showAll}>
               Hiện hết

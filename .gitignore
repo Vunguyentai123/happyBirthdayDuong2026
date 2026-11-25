@@ -2,3 +2,11 @@ node_modules/
 dist/
 photos-source/*
 !photos-source/.gitkeep
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Biến môi trường cục bộ (URL Firebase). Chỉ commit file mẫu.
+.env
+.env.*
+!.env.example

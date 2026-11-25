@@ -63,21 +63,17 @@ export function GateDoor({ opened }: { opened: boolean }) {
             />
             <div className="gate-rays pointer-events-none absolute inset-0" />
 
-            {/* Vòm trong: tạo cảm giác chiều sâu cho lối vào */}
-            <div className="pointer-events-none absolute inset-x-[13%] bottom-0 top-[13%] rounded-t-full border border-[#B5834A]/40 bg-[linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0)_55%)] shadow-[inset_0_0_26px_rgba(255,255,255,.25)]" />
-            <div className="pointer-events-none absolute inset-x-[19%] bottom-[7%] h-[9%] rounded-[50%] bg-[radial-gradient(ellipse,rgba(255,255,255,.5),transparent_72%)]" />
+            {/* Vũng sáng nơi bậc cửa, giữ cảm giác "lùi sâu" */}
+            <div className="gate-floor-glow pointer-events-none absolute inset-x-[16%] bottom-[5%] h-[10%]" />
 
             <div
               className={`gate-welcome absolute inset-0 z-0 flex flex-col items-center justify-center ${
                 opened ? 'is-open' : ''
               }`}
             >
-              <span className="font-editorial text-[9px] italic tracking-[0.16em] text-[#803044]/80 sm:text-[11px]">
-                Chúc mừng sinh nhật
-              </span>
-              <span className="font-editorial text-[4.4rem] font-semibold leading-[0.85] text-[#6B2336] drop-shadow-[0_2px_0_rgba(255,245,215,.6)] sm:text-[5.4rem]">
-                {content.age}
-              </span>
+              <span className="gate-welcome-label">Chúc mừng sinh nhật</span>
+              <span className="gate-welcome-rule" aria-hidden />
+              <span className="gate-welcome-age">{content.age}</span>
             </div>
 
             {/* Ánh sáng ấm rỉ ra ở khe cửa khi còn đóng */}
@@ -94,14 +90,16 @@ export function GateDoor({ opened }: { opened: boolean }) {
               }`}
             >
               <div className="gate-leaf gate-leaf-left relative h-full w-full overflow-hidden">
-                <div className="gate-leaf-panel gate-leaf-panel-left absolute bottom-[41%] left-2.5 right-2.5 top-3" />
-                <div className="gate-leaf-panel absolute bottom-3 left-3 right-2.5 top-[63%] rounded-[4px]" />
-                <span className="absolute left-1/2 top-4 h-1 w-1 -translate-x-1/2 rotate-45 bg-[#E3C892]/80" />
-                <span className="absolute bottom-[37%] left-1/2 h-1 w-1 -translate-x-1/2 rotate-45 bg-[#E3C892]/60" />
+                <div className="gate-panel gate-panel-top gate-panel-left">
+                  <span className="gate-panel-inlay" />
+                </div>
+                <div className="gate-panel gate-panel-bottom gate-panel-left">
+                  <span className="gate-panel-inlay" />
+                </div>
+                <span className="gate-hinge gate-hinge-top" />
+                <span className="gate-hinge gate-hinge-bottom" />
                 <span className="gate-leaf-sheen absolute inset-0" />
-                <span className="absolute left-1 top-[16%] h-4 w-[5px] rounded-[2px] bg-[linear-gradient(180deg,#F4E2B8,#C9A25D_50%,#8F682F)] shadow-[0_1px_3px_rgba(40,15,20,.5)]" />
-                <span className="absolute bottom-[14%] left-1 h-4 w-[5px] rounded-[2px] bg-[linear-gradient(180deg,#F4E2B8,#C9A25D_50%,#8F682F)] shadow-[0_1px_3px_rgba(40,15,20,.5)]" />
-                <span className="gate-handle absolute right-2.5 top-[58%] h-9 w-[3px] -translate-y-1/2 rounded-full" />
+                <span className="gate-handle gate-handle-left" />
               </div>
             </div>
 
@@ -112,14 +110,16 @@ export function GateDoor({ opened }: { opened: boolean }) {
               }`}
             >
               <div className="gate-leaf gate-leaf-right relative h-full w-full overflow-hidden">
-                <div className="gate-leaf-panel gate-leaf-panel-right absolute bottom-[41%] left-2.5 right-2.5 top-3" />
-                <div className="gate-leaf-panel absolute bottom-3 left-2.5 right-3 top-[63%] rounded-[4px]" />
-                <span className="absolute left-1/2 top-4 h-1 w-1 -translate-x-1/2 rotate-45 bg-[#E3C892]/80" />
-                <span className="absolute bottom-[37%] left-1/2 h-1 w-1 -translate-x-1/2 rotate-45 bg-[#E3C892]/60" />
+                <div className="gate-panel gate-panel-top gate-panel-right">
+                  <span className="gate-panel-inlay" />
+                </div>
+                <div className="gate-panel gate-panel-bottom gate-panel-right">
+                  <span className="gate-panel-inlay" />
+                </div>
+                <span className="gate-hinge gate-hinge-top" />
+                <span className="gate-hinge gate-hinge-bottom" />
                 <span className="gate-leaf-sheen absolute inset-0" />
-                <span className="absolute right-1 top-[16%] h-4 w-[5px] rounded-[2px] bg-[linear-gradient(180deg,#F4E2B8,#C9A25D_50%,#8F682F)] shadow-[0_1px_3px_rgba(40,15,20,.5)]" />
-                <span className="absolute bottom-[14%] right-1 h-4 w-[5px] rounded-[2px] bg-[linear-gradient(180deg,#F4E2B8,#C9A25D_50%,#8F682F)] shadow-[0_1px_3px_rgba(40,15,20,.5)]" />
-                <span className="gate-handle absolute left-2.5 top-[58%] h-9 w-[3px] -translate-y-1/2 rounded-full" />
+                <span className="gate-handle gate-handle-right" />
               </div>
             </div>
 

@@ -1,28 +1,35 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import confetti from 'canvas-confetti'
 import {
   ArrowRight,
   Flame,
+  Heart,
   Mic,
   MicOff,
-  Sparkles,
   Wind,
 } from 'lucide-react'
 import { content, pickRandom } from '../data/content'
+import { birthdayStatus } from '../lib/birthday'
 import { useSceneStore } from '../store/useSceneStore'
 import { Character } from '../components/Character'
 import { MicHelpSheet } from '../components/MicHelpSheet'
 import { useHoldToBlow, useMicBlow } from '../hooks/hooks'
+import { WishJar } from './candle/WishJar'
+import { haptic, playBirthdayJingle, playSfx } from '../audio/sfx'
 
 // Màn 3 THỔI ĐIỀU ƯỚC: bánh 3D nhiều tầng, nến thật có lửa run và khói sau khi
 // thổi. Trang được dàn như một tấm thiệp: tiêu đề thư pháp, lời nhắn của Usagi,
-// sân khấu bánh ở giữa. Sau khi ước, khay dưới cùng chuyển thành hai lượt thoại
-// (Usagi trên, Momonga dưới) và một tấm vé dẫn sang chặng kế tiếp.
+// sân khấu bánh ở giữa. Sau khi ước, khay dưới cùng chuyển thành hũ điều ước,
+// hai lượt thoại (Usagi trên, Momonga dưới) và nút sang album.
 export function CandleScene({ lite }: { lite: boolean }) {
   const wishBlown = useSceneStore((s) => s.wishBlown)
   const setWishBlown = useSceneStore((s) => s.setWishBlown)
   const next = useSceneStore((s) => s.next)
   const setProgress = useSceneStore((s) => s.setProgress)
+  const musicOn = useSceneStore((s) => s.musicOn)
+  const setDuckMusic = useSceneStore((s) => s.setDuckMusic)
+  const jinglePlayed = useRef(false)
+  const status = birthdayStatus(content.birthdayISO)
 
   const wishLine = useMemo(() => pickRandom(content.usagiLines.blowCandle), [])
   const sneakLine = useMemo(() => pickRandom(content.momongaLines.momongaSneaksCake), [])
@@ -31,15 +38,33 @@ export function CandleScene({ lite }: { lite: boolean }) {
   const blowOut = useCallback(() => {
     setWishBlown(true)
     setProgress(1)
+    playSfx('blow', musicOn)
+    haptic([14, 26, 20], musicOn)
     if (lite) {
       confetti({
         particleCount: 160,
         spread: 92,
         origin: { y: 0.46 },
-        colors: ['#F7C9D4', '#F6E3A1', '#C9A25D', '#B85C74', '#FFF8E7'],
+        colors: ['#FF8FB1', '#FFC21A', '#BFE8FF', '#D6F5E8', '#D8C7F2', '#FFF8EA'],
       })
     }
-  }, [lite, setWishBlown, setProgress])
+  }, [lite, musicOn, setWishBlown, setProgress])
+
+  // Nhạc hộp Happy Birthday phát một lần sau khi nến tắt, đồng thời hạ nhạc nền
+  // xuống để hai lớp không tranh nhau. Chỉ phát nếu khách đã bật âm thanh.
+  useEffect(() => {
+    if (!wishBlown || jinglePlayed.current) return
+    jinglePlayed.current = true
+    if (!musicOn) return
+    const duration = playBirthdayJingle(musicOn)
+    if (duration <= 0) return
+    setDuckMusic(true)
+    const id = window.setTimeout(() => setDuckMusic(false), duration * 1000 + 700)
+    return () => {
+      window.clearTimeout(id)
+      setDuckMusic(false)
+    }
+  }, [wishBlown, musicOn, setDuckMusic])
 
   const { holding, progress: holdProgress, start, cancel } = useHoldToBlow(1500, blowOut)
   const mic = useMicBlow(blowOut)
@@ -72,8 +97,13 @@ export function CandleScene({ lite }: { lite: boolean }) {
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
         <header className="candle-head">
+          <p className="candle-eyebrow">
+            <span />
+            {status.short} · tuổi {content.age}
+            <span />
+          </p>
           <h1 className="candle-title">
-            Thổi nến, <em>ước một điều.</em>
+            Tắt đèn, thổi nến <em>nhé.</em>
           </h1>
           <p className="candle-sub">Nhắm mắt thật chặt và giữ điều ước trong tim nhé.</p>
         </header>
@@ -87,13 +117,12 @@ export function CandleScene({ lite }: { lite: boolean }) {
               <span className="candle-note-name">Usagi</span>
               <span className="candle-note-line">{wishLine}</span>
             </span>
-            <Sparkles className="candle-note-spark" size={14} strokeWidth={2.2} aria-hidden />
+            <Heart className="candle-note-heart" size={14} strokeWidth={0} fill="currentColor" aria-hidden />
           </div>
         )}
 
         <section className={`candle-stage ${wishBlown ? 'is-wished' : ''}`} aria-label="Bánh sinh nhật 3D">
           <div aria-hidden className="candle-stage-aura" />
-          <div aria-hidden className="candle-stage-ring" />
           <div aria-hidden className="candle-stage-sparks">
             <i /><i /><i /><i /><i /><i />
           </div>
@@ -177,6 +206,8 @@ export function CandleScene({ lite }: { lite: boolean }) {
                   <span aria-hidden />
                 </p>
               </div>
+
+              <WishJar />
 
               <div className="candle-exchange" aria-live="polite">
                 <div className="candle-turn">

@@ -1,0 +1,247 @@
+// Tạo tấm ảnh kỷ niệm ngay trên máy, không upload ở đâu cả.
+// Ảnh 1080x1350 (dọc) để Chanh lưu vào điện thoại hoặc gửi cho anh.
+
+import { asset } from '../data/assets'
+import { content } from '../data/content'
+import { generatedPhotos } from '../data/photos.generated'
+import { birthdayStatus } from './birthday'
+import type { Wish } from './wish'
+
+const WIDTH = 1080
+const HEIGHT = 1350
+const INK = '#4A2F27'
+const PAPER = '#FFF8EA'
+const PINK = '#E45C86'
+const BUTTER = '#FFC21A'
+const MINT = '#6FC3A4'
+const SKY = '#8CCBEA'
+
+interface RecapOptions {
+  wish?: Wish | null
+}
+
+function loadImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.decoding = 'async'
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve(null)
+    img.src = src
+  })
+}
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+) {
+  const r = Math.min(radius, width / 2, height / 2)
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + width, y, x + width, y + height, r)
+  ctx.arcTo(x + width, y + height, x, y + height, r)
+  ctx.arcTo(x, y + height, x, y, r)
+  ctx.arcTo(x, y, x + width, y, r)
+  ctx.closePath()
+}
+
+function drawCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight)
+  const drawWidth = img.naturalWidth * scale
+  const drawHeight = img.naturalHeight * scale
+  ctx.save()
+  roundRect(ctx, x, y, width, height, 30)
+  ctx.clip()
+  ctx.drawImage(img, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight)
+  ctx.restore()
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(/\s+/)
+  const lines: string[] = []
+  let line = ''
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word
+    if (ctx.measureText(next).width > maxWidth && line) {
+      lines.push(line)
+      line = word
+    } else {
+      line = next
+    }
+  }
+  if (line) lines.push(line)
+  return lines
+}
+
+function choosePhotos(): string[] {
+  const list = generatedPhotos.length > 0 ? generatedPhotos : ['/characters/usagi-08.png', '/characters/momonga-04.png']
+  const indexes = list.length >= 8 ? [0, 3, 5, 8] : [0, 1, 2, 3]
+  const chosen = indexes.map((i) => list[i % list.length])
+  return chosen.map((src) => asset(src))
+}
+
+export async function createRecapImage(options: RecapOptions = {}): Promise<string> {
+  const canvas = document.createElement('canvas')
+  canvas.width = WIDTH
+  canvas.height = HEIGHT
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Canvas không khả dụng')
+
+  try {
+    // Đợi font ngắn thôi: nếu mạng/asset chậm, vẫn vẽ bằng font dự phòng thay vì
+    // treo nút "Đang ghép ảnh...".
+    const fontsReady = Promise.all([
+      document.fonts.load('italic 600 168px "Playfair Display"'),
+      document.fonts.load('800 58px "Baloo 2"'),
+      document.fonts.ready,
+    ])
+    await Promise.race([fontsReady, new Promise((resolve) => setTimeout(resolve, 1500))])
+  } catch {
+    // Font chưa sẵn sàng vẫn vẽ được bằng font dự phòng.
+  }
+
+  const status = birthdayStatus(content.birthdayISO)
+
+  // Nền giấy kem + hạt confetti rải cố định (cùng một tấm ảnh mỗi lần tạo).
+  ctx.fillStyle = PAPER
+  ctx.fillRect(0, 0, WIDTH, HEIGHT)
+  const colors = [PINK, BUTTER, SKY, MINT, '#D8C7F2', '#FF9E7A']
+  let seed = 17
+  const rand = () => {
+    seed = (seed * 16807) % 2147483647
+    return seed / 2147483647
+  }
+  for (let i = 0; i < 150; i++) {
+    const x = rand() * WIDTH
+    const y = rand() * HEIGHT
+    const size = 6 + rand() * 12
+    ctx.globalAlpha = 0.35 + rand() * 0.4
+    ctx.fillStyle = colors[Math.floor(rand() * colors.length)] ?? PINK
+    ctx.beginPath()
+    if (i % 3 === 0) {
+      ctx.rect(x, y, size, size * 0.45)
+    } else {
+      ctx.arc(x, y, size / 2, 0, Math.PI * 2)
+    }
+    ctx.fill()
+  }
+  ctx.globalAlpha = 1
+
+  // Viền trong
+  ctx.strokeStyle = 'rgba(74,47,39,.18)'
+  ctx.lineWidth = 3
+  roundRect(ctx, 42, 42, WIDTH - 84, HEIGHT - 84, 46)
+  ctx.stroke()
+
+  // Tiêu đề
+  ctx.textAlign = 'center'
+  ctx.fillStyle = PINK
+  ctx.font = '700 34px "Baloo 2", sans-serif'
+  ctx.fillText('HAPPY BIRTHDAY', WIDTH / 2, 152)
+
+  ctx.fillStyle = INK
+  ctx.font = 'italic 600 168px "Playfair Display", Georgia, serif'
+  ctx.fillText(content.nickname, WIDTH / 2, 322)
+
+  ctx.fillStyle = INK
+  ctx.font = '800 58px "Baloo 2", sans-serif'
+  ctx.fillText(`tuổi ${content.age}`, WIDTH / 2, 390)
+
+  ctx.fillStyle = 'rgba(74,47,39,.68)'
+  ctx.font = '700 28px "Baloo 2", sans-serif'
+  ctx.fillText(`${status.full} · sinh nhật`, WIDTH / 2, 438)
+
+  // 4 ảnh polaroid
+  const photos = choosePhotos()
+  const loaded = await Promise.all(photos.map(loadImage))
+  const frameW = 430
+  const frameH = 330
+  const gap = 26
+  const startX = (WIDTH - frameW * 2 - gap) / 2
+  const startY = 500
+
+  loaded.forEach((img, index) => {
+    const col = index % 2
+    const row = Math.floor(index / 2)
+    const x = startX + col * (frameW + gap)
+    const y = startY + row * (frameH + gap)
+    const tilt = index % 2 === 0 ? -0.022 : 0.02
+
+    ctx.save()
+    ctx.translate(x + frameW / 2, y + frameH / 2)
+    ctx.rotate(tilt)
+    ctx.translate(-frameW / 2, -frameH / 2)
+
+    ctx.fillStyle = '#FFFFFF'
+    ctx.shadowColor = 'rgba(74,47,39,.18)'
+    ctx.shadowBlur = 20
+    ctx.shadowOffsetY = 10
+    roundRect(ctx, 0, 0, frameW, frameH, 18)
+    ctx.fill()
+    ctx.shadowColor = 'transparent'
+    ctx.shadowBlur = 0
+    ctx.shadowOffsetY = 0
+
+    if (img) {
+      drawCover(ctx, img, 14, 14, frameW - 28, frameH - 78)
+    } else {
+      ctx.fillStyle = '#FFE6EE'
+      roundRect(ctx, 14, 14, frameW - 28, frameH - 78, 12)
+      ctx.fill()
+      ctx.fillStyle = PINK
+      ctx.font = '700 36px "Baloo 2", sans-serif'
+      ctx.fillText('♡', frameW / 2, frameH / 2)
+    }
+
+    // Băng dính washi
+    ctx.fillStyle = index % 2 === 0 ? 'rgba(255,194,26,.7)' : 'rgba(191,232,255,.8)'
+    roundRect(ctx, frameW / 2 - 42, -8, 84, 24, 4)
+    ctx.fill()
+
+    // Caption ngắn trên polaroid
+    ctx.fillStyle = INK
+    ctx.font = '700 22px "Baloo 2", sans-serif'
+    const caption = content.photoCaptions[index % content.photoCaptions.length] ?? ''
+    ctx.fillText(caption, frameW / 2, frameH - 30)
+
+    ctx.restore()
+  })
+
+  // Lời chúc / điều ước
+  ctx.textAlign = 'center'
+  const quote = options.wish?.text
+    ? `“${options.wish.text}”`
+    : content.photoNotes[8] ?? 'Một ngày rất đỗi bình thường, có em là thành ngày anh nhớ.'
+  ctx.fillStyle = INK
+  ctx.font = 'italic 500 30px "Playfair Display", Georgia, serif'
+  const lines = wrapText(ctx, quote, WIDTH - 220).slice(0, 2)
+  lines.forEach((line, index) => {
+    ctx.fillText(line, WIDTH / 2, 1242 + index * 38)
+  })
+
+  // Chân ảnh
+  ctx.fillStyle = PINK
+  ctx.font = '700 25px "Baloo 2", sans-serif'
+  ctx.fillText('Usagi & Momonga có quà cho Chanh', WIDTH / 2, 1320)
+
+  return canvas.toDataURL('image/png')
+}
+
+export function downloadRecap(dataUrl: string): void {
+  const link = document.createElement('a')
+  link.href = dataUrl
+  link.download = `sinh-nhat-chanh-${content.age}.png`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
