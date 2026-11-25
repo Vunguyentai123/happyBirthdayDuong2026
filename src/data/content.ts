@@ -170,7 +170,7 @@ export const content: BirthdayContent = {
     'Còn nhiều tấm nữa, anh để dành chụp cùng em thật lâu.',
   ],
   letterTitle: 'Gửi Chanh tuổi 17',
-  letterBody: `Gửi Chanh yêu,
+  letterBody: `Gửi em,
 
 Chúc mừng sinh nhật yêu của anh!
 
