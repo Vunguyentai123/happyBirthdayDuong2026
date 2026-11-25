@@ -4348,14 +4348,6 @@ input:focus-visible,
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-.bday-hero-hint {
-  margin-top: 0.5rem;
-  color: rgba(74, 47, 39, 0.5);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
 .bday-seal {
   background: conic-gradient(from 210deg, #fff3c4, #ffd978 26%, #e0a32e 52%, #ffe9a8 74%, #f0a900 100%);
   box-shadow:

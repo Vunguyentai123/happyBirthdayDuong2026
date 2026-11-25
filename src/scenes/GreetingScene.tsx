@@ -244,8 +244,6 @@ export function GreetingScene() {
                 </span>
               </button>
             </div>
-
-            <p className="bday-hero-hint">Usagi &amp; Momonga đã chuẩn bị xong.</p>
           </div>
         </article>
       </div>
