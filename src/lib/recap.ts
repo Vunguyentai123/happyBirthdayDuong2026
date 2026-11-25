@@ -97,20 +97,35 @@ export async function createRecapImage(options: RecapOptions = {}): Promise<stri
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('Canvas không khả dụng')
 
+  const status = birthdayStatus(content.birthdayISO)
+
   try {
     // Đợi font ngắn thôi: nếu mạng/asset chậm, vẫn vẽ bằng font dự phòng thay vì
     // treo nút "Đang ghép ảnh...".
+    // Truyền mẫu chữ có đủ dấu tiếng Việt để trình duyệt tải đúng file subset;
+    // nếu chỉ load mặt chữ trơn, chữ có dấu sẽ rơi về font dự phòng khi vẽ.
+    const sample = [
+      content.nickname,
+      `tuổi ${content.age}`,
+      status.full,
+      ...content.photoCaptions,
+    ].join(' ')
     const fontsReady = Promise.all([
-      document.fonts.load('italic 600 168px "Playfair Display"'),
-      document.fonts.load('800 58px "Baloo 2"'),
+      // 600 italic phải là mặt chữ thật (đã import 600-italic.css). Thiếu mặt
+      // này, trình duyệt tự nghiêng + tự làm đậm và chữ bị vỡ nét trên canvas.
+      document.fonts.load('italic 600 168px "Playfair Display"', sample),
+      document.fonts.load('italic 500 30px "Playfair Display"', sample),
+      document.fonts.load('700 34px "Baloo 2"', sample),
+      document.fonts.load('800 58px "Baloo 2"', sample),
+      document.fonts.load('700 28px "Baloo 2"', sample),
+      document.fonts.load('700 25px "Baloo 2"', sample),
+      document.fonts.load('700 22px "Baloo 2"', sample),
       document.fonts.ready,
     ])
-    await Promise.race([fontsReady, new Promise((resolve) => setTimeout(resolve, 1500))])
+    await Promise.race([fontsReady, new Promise((resolve) => setTimeout(resolve, 2500))])
   } catch {
     // Font chưa sẵn sàng vẫn vẽ được bằng font dự phòng.
   }
-
-  const status = birthdayStatus(content.birthdayISO)
 
   // Nền giấy kem + hạt confetti rải cố định (cùng một tấm ảnh mỗi lần tạo).
   ctx.fillStyle = PAPER
