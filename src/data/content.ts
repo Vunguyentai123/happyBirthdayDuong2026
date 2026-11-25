@@ -172,7 +172,7 @@ export const content: BirthdayContent = {
   letterTitle: 'Gửi Chanh tuổi 17',
   letterBody: `Gửi Chanh yêu,
 
-Chúc mừng sinh nhật người đặc biệt nhất của anh! 🎂
+Chúc mừng sinh nhật yêu của anh!
 
 Cảm ơn em vì đã xuất hiện trong cuộc sống của anh, mang đến cho anh những nụ cười, sự ấm áp và cả những ngày bình yên bên nhau. Mỗi khoảnh khắc có em đều khiến anh thấy mình thật may mắn.
 
