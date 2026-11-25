@@ -189,7 +189,7 @@ Hạn dùng: mãi mãi.`,
       body: '',
     },
     {
-      code: 'Q17-03',
+      code: 'Q17-02',
       title: 'Một điều ước để dành',
       body: '',
     },
