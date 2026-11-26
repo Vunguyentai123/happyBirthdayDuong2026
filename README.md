@@ -7,7 +7,7 @@ Trình tự màn hình
 #	Màn	id (store)	Việc chính
 1	Thiệp mời	`lock`	Momonga soát vé, Chanh bấm check-in để mở cửa
 2	Hero sinh nhật	`greeting`	Tên + tuổi 17 + ngày 27.11, bật nhạc, vào tiệc
-3	Thổi nến	`candle`	Bánh 3D, thổi bằng nút giữ hoặc micro, rồi thả điều ước vào hũ
+3	Thổi nến	`candle`	Bánh 3D, giữ nút để thổi nến, rồi thả điều ước vào hũ
 4	Album	`photos`	Polaroid vuốt tay (không tự chạy), bấm để phóng to
 5	Thư	`letter`	Mở phong bì, chữ hiện dần
 6	Sổ quà	`gift`	Hộp 3D mở ra 3 coupon + tạo ảnh kỷ niệm, chơi lại
@@ -22,8 +22,7 @@ npm run dev        # http://127.0.0.1:5173
 npm run build
 npm run preview
 ```
-Deploy thư mục `dist/` lên Netlify, Vercel, Cloudflare hoặc hosting tĩnh bất kỳ. Micro chỉ hoạt
-động trên `https://` hoặc `localhost`.
+Deploy thư mục `dist/` lên Netlify, Vercel, Cloudflare hoặc hosting tĩnh bất kỳ.
 
 Hũ điều ước → Firebase Realtime Database (riêng tư)
 - Bật Realtime Database trong Firebase Console, copy data URL rồi điền vào `.env.local`
@@ -83,7 +82,7 @@ Mỗi màn có một tiêu đề và một dòng phụ là tối đa.
 Chỉ một kiểu nút chính cho cả hành trình: nền `--butter`, chữ `--ink` đậm, viền `--ink` 2px, bo
 tròn hoàn toàn, bóng đổ cứng lệch xuống 3px. Bấm thì lún xuống. Cùng một kích thước và cùng một vị
 trí ở mọi màn (giữa, cách đáy 24px).
-Nút phụ (micro, mũi tên trước/sau, tắt nhạc): tròn, nền kem, viền `--ink`, không chữ hoặc chữ rất
+Nút phụ (mũi tên trước/sau, tắt nhạc): tròn, nền kem, viền `--ink`, không chữ hoặc chữ rất
 ngắn.
 Bỏ: nút xanh rêu (màn 2), nút tím đậm (màn 2 và 3), vé CTA có số trang (màn 3), nút vàng gradient
 có icon lửa (màn 3).
@@ -169,7 +168,6 @@ Bánh 3D (`three/CakeScene.tsx`, `AvatarCake`) giữ nguyên. Nên giảm đầu
 thấy lạ mắt, vì bánh đã có mặt nhân vật ở thân.
 Khay điều khiển gọn lại:
 Một nút chính "Giữ để thổi nến" có thanh fill theo tiến độ, bỏ icon lửa.
-Một nút tròn nhỏ micro bên cạnh (`useMicBlow`), khi bật hiện thanh mức hơi.
 Gợi ý "Kéo để xoay bánh" đặt thành dòng chữ nhỏ dưới khay.
 Bỏ chip "Nến đang chờ" và "Giữ 1,5 giây".
 Sau khi ước (`wishBlown = true`)
@@ -289,7 +287,7 @@ Sửa nhãn bubble ở màn 4 theo đúng nhân vật.
 Thay `momonga-03.png` vì còn watermark TikTok.
 Kiểm tra
 Xem thật trên điện thoại ở bề ngang 433px, nhất là màn 1 sau khi mở cửa.
-Thử micro trên `https://` hoặc `localhost` thật (ngưỡng phát hiện hơi thổi, thông báo lỗi quyền).
+Giữ nút "Giữ để thổi nến" ~1,5 giây để chắc nến tắt, confetti và nhạc hộp chạy đúng.
 Công nghệ
 React 19.3, TypeScript 7, Vite 8, Tailwind CSS 4.3, Zustand 5, React Three Fiber 9 + drei 10,
 canvas-confetti, lucide-react. Font tự host: Baloo 2, Playfair Display và Caveat.

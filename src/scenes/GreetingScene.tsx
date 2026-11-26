@@ -6,7 +6,6 @@ import { birthdayStatus } from '../lib/birthday'
 import { useSceneStore } from '../store/useSceneStore'
 import { UsagiHop } from '../components/UsagiHop'
 import { MusicToggle } from '../components/MusicToggle'
-import { prewarmMic } from '../hooks/hooks'
 import { haptic, playSfx } from '../audio/sfx'
 
 const CONFETTI_COLORS = [
@@ -89,7 +88,6 @@ export function GreetingScene() {
 
   const goNext = () => {
     if (leaving) return
-    prewarmMic()
     // Bấm "Vào tiệc thôi" là một cử chỉ hợp lệ: bật nhạc luôn cho có không khí,
     // khách vẫn tắt được bằng đĩa nhạc ở góc.
     if (!musicOn) setMusicOn(true)

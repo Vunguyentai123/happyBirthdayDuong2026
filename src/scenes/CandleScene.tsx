@@ -4,16 +4,12 @@ import {
   ArrowRight,
   Flame,
   Heart,
-  Mic,
-  MicOff,
-  Wind,
 } from 'lucide-react'
 import { content, pickRandom } from '../data/content'
 import { birthdayStatus } from '../lib/birthday'
 import { useSceneStore } from '../store/useSceneStore'
 import { Character } from '../components/Character'
-import { MicHelpSheet } from '../components/MicHelpSheet'
-import { useHoldToBlow, useMicBlow } from '../hooks/hooks'
+import { useHoldToBlow } from '../hooks/hooks'
 import { WishJar } from './candle/WishJar'
 import { haptic, playBirthdayJingle, playSfx } from '../audio/sfx'
 
@@ -67,49 +63,14 @@ export function CandleScene({ lite }: { lite: boolean }) {
   }, [wishBlown, musicOn, setDuckMusic])
 
   const { holding, progress: holdProgress, start, cancel } = useHoldToBlow(1500, blowOut)
-  const mic = useMicBlow(blowOut)
-  const autoStartMic = mic.autoStart
-  const askMic = mic.ask
 
-  // Vào màn là tự xin quyền micro (kể cả laptop): nếu quyền đã có thì micro mở
-  // luôn; nếu chưa từng hỏi, trình duyệt hiện hộp thoại "Cho phép micro?" — khách
-  // chỉ bấm Cho phép, không phải vào Cài đặt. Trên iPhone/Safari lời gọi phải
-  // nằm trong cử chỉ chạm, nên cú chạm đầu tiên trên màn này (kể cả nút "Giữ để
-  // thổi") sẽ bung hộp thoại; nút micro tự xin trong onClick của nó.
+  // Nền sáng dần theo thời gian giữ nút; nhả tay giữa chừng thì trả về 0.
   useEffect(() => {
     if (wishBlown) return
-    const id = window.setTimeout(() => void autoStartMic(), 600)
+    setProgress(holding ? holdProgress : 0)
+  }, [wishBlown, holding, holdProgress, setProgress])
 
-    const cleanup = () => {
-      window.removeEventListener('pointerdown', onTap, true)
-      window.removeEventListener('keydown', onTap, true)
-    }
-    const isMicToggle = (target: EventTarget | null) =>
-      target instanceof Element && !!target.closest('[data-mic-toggle]')
-    function onTap(event: Event) {
-      // Nút micro tự xin quyền trong onClick của nó; bỏ qua để không giành lượt.
-      if (isMicToggle(event.target)) return
-      cleanup()
-      void askMic()
-    }
-    window.addEventListener('pointerdown', onTap, true)
-    window.addEventListener('keydown', onTap, true)
-
-    return () => {
-      window.clearTimeout(id)
-      cleanup()
-    }
-  }, [askMic, autoStartMic, wishBlown])
-
-  // Nền sáng dần theo hơi thổi; nhả tay hoặc tắt micro giữa chừng thì trả về 0.
-  useEffect(() => {
-    if (wishBlown) return
-    if (holding) setProgress(holdProgress)
-    else if (mic.on) setProgress(mic.fill)
-    else setProgress(0)
-  }, [wishBlown, holding, holdProgress, mic.on, mic.fill, setProgress])
-
-  const percent = Math.round((holding ? holdProgress : mic.on ? mic.fill : 0) * 100)
+  const percent = Math.round((holding ? holdProgress : 0) * 100)
 
   return (
     <div className="candle-scene relative isolate min-h-dvh w-full overflow-hidden">
@@ -187,39 +148,6 @@ export function CandleScene({ lite }: { lite: boolean }) {
                 </span>
                 {holding && <span className="candle-blow-pct">{percent}%</span>}
               </button>
-
-              <div className="candle-tools">
-                <button
-                  type="button"
-                  data-mic-toggle
-                  onClick={mic.toggle}
-                  aria-pressed={mic.on}
-                  aria-label={mic.on ? 'Tắt micro' : 'Thổi nến bằng micro'}
-                  className={`candle-mic ${mic.on ? 'is-listening' : ''}`}
-                >
-                  {mic.on ? <MicOff size={15} strokeWidth={2.6} /> : <Mic size={15} strokeWidth={2.6} />}
-                  <span>{mic.on ? 'Đang nghe...' : 'Thổi bằng micro'}</span>
-                  {mic.on && <i className="candle-mic-pulse" aria-hidden />}
-                </button>
-              </div>
-
-              {mic.on && (
-                <div className="candle-level">
-                  <Wind size={13} strokeWidth={2.6} aria-hidden />
-                  <span className="candle-level-track">
-                    <span
-                      className="candle-level-fill"
-                      style={{ width: `${Math.round(Math.max(mic.level, mic.fill) * 100)}%` }}
-                    />
-                  </span>
-                </div>
-              )}
-
-              {mic.note && (
-                <p className="candle-note-hint" role="status" aria-live="polite">
-                  {mic.note}
-                </p>
-              )}
             </>
           ) : (
             <div className="candle-after anim-pop">
@@ -280,13 +208,6 @@ export function CandleScene({ lite }: { lite: boolean }) {
             </div>
           )}
         </div>
-
-        <MicHelpSheet
-          open={mic.helpOpen}
-          problem={mic.problem}
-          onRetry={mic.retry}
-          onClose={mic.closeHelp}
-        />
       </div>
     </div>
   )
