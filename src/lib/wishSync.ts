@@ -159,7 +159,7 @@ async function put(item: QueuedRecord): Promise<boolean> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item.record),
       signal: controller.signal,
-      // keepalive: ghi vẫn đi tiếp nếu Chanh đóng tab ngay sau khi bấm.
+      // keepalive: ghi vẫn đi tiếp nếu Dương đóng tab ngay sau khi bấm.
       keepalive: true,
       cache: 'no-store',
       credentials: 'omit',
@@ -223,7 +223,7 @@ export function queueWishSync(wish: Wish): void {
 }
 
 /**
- * Chanh bấm xoá: bản trên máy mất, nhưng bản lưu vẫn ở lại Firebase kèm `deletedAt`
+ * Dương bấm xoá: bản trên máy mất, nhưng bản lưu vẫn ở lại Firebase kèm `deletedAt`
  * để chủ project còn đọc được. Không hiện gì khác trên giao diện.
  */
 export function queueWishDeleted(wish: Wish): void {

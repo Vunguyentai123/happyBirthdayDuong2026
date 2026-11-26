@@ -1,5 +1,5 @@
 // Tạo tấm ảnh kỷ niệm ngay trên máy, không upload ở đâu cả.
-// Ảnh 1080x1350 (dọc) để Chanh lưu vào điện thoại hoặc gửi cho anh.
+// Ảnh 1080x1350 (dọc) để Dương lưu vào điện thoại hoặc gửi cho anh.
 
 import { asset } from '../data/assets'
 import { content } from '../data/content'
@@ -265,7 +265,7 @@ export async function createRecapImage(options: RecapOptions = {}): Promise<stri
 export function downloadRecap(dataUrl: string): void {
   const link = document.createElement('a')
   link.href = dataUrl
-  link.download = `sinh-nhat-chanh-${content.age}.png`
+  link.download = `sinh-nhat-duong-${content.age}.png`
   document.body.appendChild(link)
   link.click()
   link.remove()

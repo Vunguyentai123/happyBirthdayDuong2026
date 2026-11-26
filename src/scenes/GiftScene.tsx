@@ -86,7 +86,7 @@ export function GiftScene({ lite }: { lite: boolean }) {
     <PageFrame>
       <PageHead
         title="Sổ quà"
-        accent="của Chanh"
+        accent="của Dương"
         sub="Hai tấm coupon nhỏ, đổi lúc nào cũng được."
       />
 

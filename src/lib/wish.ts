@@ -1,4 +1,4 @@
-// Hũ điều ước: lưu trên máy của Chanh (localStorage) và gửi một bản ghi sang
+// Hũ điều ước: lưu trên máy của Dương (localStorage) và gửi một bản ghi sang
 // Firebase Realtime Database để chủ project còn đọc lại (xem `wishSync.ts`).
 // Chữ trên giao diện vẫn giữ giọng "của riêng em": không nói gì về việc sao lưu.
 // Nếu trình duyệt chặn localStorage (chế độ riêng tư), vẫn giữ trong bộ nhớ

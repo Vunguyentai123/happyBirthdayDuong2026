@@ -1,11 +1,11 @@
-Usagi & Momonga có quà cho Chanh
-Web chúc mừng sinh nhật Chanh (Dương), 17 tuổi, sinh nhật **27.11.2026**. Hành trình gồm 6 màn
+Usagi & Momonga có quà cho Dương
+Web chúc mừng sinh nhật Dương, 17 tuổi, sinh nhật **27.11.2026**. Hành trình gồm 6 màn
 đi một chiều, hai nhân vật Usagi và Momonga dẫn chuyện suốt. Đi hết là nhận đủ quà và một tấm
 ảnh kỷ niệm tải về. Toàn bộ nội dung (lời thoại, chú thích ảnh, thư, quà, nhạc) nằm trong
 `src/data/content.ts`.
 Trình tự màn hình
 #	Màn	id (store)	Việc chính
-1	Thiệp mời	`lock`	Momonga soát vé, Chanh bấm check-in để mở cửa
+1	Thiệp mời	`lock`	Momonga soát vé, Dương bấm check-in để mở cửa
 2	Hero sinh nhật	`greeting`	Tên + tuổi 17 + ngày 27.11, bật nhạc, vào tiệc
 3	Thổi nến	`candle`	Bánh 3D, giữ nút để thổi nến, rồi thả điều ước vào hũ
 4	Album	`photos`	Polaroid vuốt tay (không tự chạy), bấm để phóng to
@@ -35,20 +35,20 @@ Hũ điều ước → Firebase Realtime Database (riêng tư)
   Actions; workflow `.github/workflows/deploy.yml` đã truyền biến này lúc build.
 - URL database nằm trong bundle nên không phải bí mật; thứ bảo vệ dữ liệu là rules. Client
   chỉ PUT, không bao giờ GET.
-- Chanh bấm xoá: bản trên máy mất, bản trên Firebase vẫn giữ `text` cũ kèm `deletedAt`.
+- Dương bấm xoá: bản trên máy mất, bản trên Firebase vẫn giữ `text` cũ kèm `deletedAt`.
 - Mất mạng: bản ghi nằm trong hàng đợi `chanh:wish:queue:v1` và tự gửi lại lần mở sau.
 
 ---
 Bản sinh nhật 2026 (thay cho bản cổng đố cũ)
 - Vé VIP + check-in thay câu hỏi kỷ niệm. Bộ câu hỏi cũ vẫn nằm trong `content.gateQuiz`
   để sau này dùng làm câu đố phụ, nhưng màn 1 không còn dùng.
-- Hero mới: HAPPY BIRTHDAY + Chanh + 17 + badge 27.11, bật nhạc và vào tiệc.
-- Hũ điều ước: sau khi thổi nến, Chanh viết tối đa 120 ký tự; lưu `localStorage`
+- Hero mới: HAPPY BIRTHDAY + Dương + 17 + badge 27.11, bật nhạc và vào tiệc.
+- Hũ điều ước: sau khi thổi nến, Dương viết tối đa 120 ký tự; lưu `localStorage`
   (`chanh:wish:v1`) và ghi một bản sao lưu riêng tư lên Firebase Realtime Database
   (client chỉ ghi, rules chặn đọc). Giao diện chỉ nói "của riêng em", có nút xoá.
 - Album không tự trượt; caption ngắn in dưới polaroid, câu dài dùng cho `alt` và khung zoom.
 - Sổ quà: 3 coupon (đi chơi, bữa ăn, điều ước để dành) + ảnh kỷ niệm 1080×1350 ghép
-  bằng canvas ngay trên máy. Ảnh có thể in kèm điều ước nếu Chanh tick chọn.
+  bằng canvas ngay trên máy. Ảnh có thể in kèm điều ước nếu Dương tick chọn.
 - Âm thanh: Web Audio tổng hợp nhạc hộp Happy Birthday (khi bật nhạc) + SFX giấy/dấu vé/
   ruy băng. Không thêm file âm thanh mới, không gọi mạng.
 - Loader có 5 bóng bay bấm được để giết thời gian chờ.
@@ -57,7 +57,7 @@ Bản sinh nhật 2026 (thay cho bản cổng đố cũ)
 ---
 Nguyên tắc giao diện (áp dụng cho cả 6 màn)
 Mục tiêu: cả web nhìn như một thế giới 3D đồ chơi sinh nhật của hai nhân vật, không phải một
-trang giới thiệu sản phẩm. Mọi thứ trên màn hình phải trả lời được câu hỏi "Chanh cần đọc hoặc bấm
+trang giới thiệu sản phẩm. Mọi thứ trên màn hình phải trả lời được câu hỏi "Dương cần đọc hoặc bấm
 cái này để làm gì?". Cái nào không có câu trả lời thì bỏ.
 1. Bảng token dùng chung
 Lấy theo giao diện màn 4-6 hiện có làm chuẩn, các màn 1-3 chỉnh về cho khớp.
@@ -73,7 +73,7 @@ Bóng	một kiểu duy nhất, mềm, màu nâu mờ	Mọi thẻ
 Bỏ hẳn đỏ rượu (burgundy), vàng gold kim loại và xanh rêu đậm. Không có gradient trên nút.
 2. Chữ
 Baloo 2 cho toàn bộ giao diện: tiêu đề, lời thoại, nút, chú thích.
-Playfair Display (italic) chỉ dùng ở 3 chỗ: tên "Chanh" ở màn 2, dòng khắc trên bánh, tiêu
+Playfair Display (italic) chỉ dùng ở 3 chỗ: tên "Dương" ở màn 2, dòng khắc trên bánh, tiêu
 đề lá thư. Ở đâu khác cũng không dùng.
 Không dùng chữ viết hoa giãn chữ (letter-spacing) cho nhãn nhỏ. Chữ phụ viết thường, cỡ tối
 thiểu 14px.
@@ -93,7 +93,7 @@ Thẻ chỉ chứa nội dung chính (câu hỏi, lời chúc, ảnh, thư). Nh�
 thẻ, đè lên mép thẻ hoặc đứng cạnh, không nhét vào avatar tròn.
 Vùng giữa màn hình dành cho nội dung. Vật thể 3D chỉ thưa ra ở vùng đó.
 5. Nhân vật
-Usagi bên phải, Momonga bên trái (hoặc theo vai trong từng màn). Cố định vị trí để Chanh quen.
+Usagi bên phải, Momonga bên trái (hoặc theo vai trong từng màn). Cố định vị trí để Dương quen.
 Lời thoại dùng bubble kiểu truyện tranh: Usagi nền `--sun`, Momonga nền `--mint`, tên nhân vật
 in đậm một dòng nhỏ phía trên, không có chip hay tag đi kèm.
 Mỗi lượt thoại ngắn, một hai câu, giọng thân mật ("tui", "nha", "nhé").
@@ -112,7 +112,7 @@ màn hình, chấm của màn đã qua tô `--pink`, màn hiện tại to hơn m
 Nhãn nhỏ viết hoa: "CỔNG ĐANG KHÓA", "Lời mời số 01", "LỜI THÁCH ĐỐ CỦA NGƯỜI GIỮ CỔNG",
 "CHẶNG TIẾP THEO", "THIỆP CHÚC", "HAPPY BIRTHDAY", "ĐIỀU ƯỚC SINH NHẬT", "ĐI TIẾP".
 Dòng phụ đếm: "02 lời · 01 điều ước", "CÒN 4 ĐIỀU BẤT NGỜ".
-Chân trang: "Made with love for Chanh · 17", "Gửi Chanh · Một chút ngọt ngào trước khi thổi
+Chân trang: "Made with love for Dương · 17", "Gửi Dương · Một chút ngọt ngào trước khi thổi
 nến".
 Chip trạng thái: "Usagi đang nhảy mừng", "Nến đang chờ", "Giữ 1,5 giây", "Bị bắt quả tang!"
 (nội dung đó nằm trong lời thoại là đủ).
@@ -130,10 +130,10 @@ Desktop (từ 1024px): cửa bên trái, thẻ câu hỏi bên phải. Mobile: m
 Cửa vòm giữ nguyên (`GateDoor.tsx`, vẽ bằng CSS), chỉnh khung vàng gold sang màu gỗ ấm hoặc vàng
 bơ cho khớp bảng màu. Hai cánh mở bằng `rotateY`.
 Tiêu đề:
-Trước mở: "Khoan đã Chanh, trả lời đúng mới được vào!"
+Trước mở: "Khoan đã Dương, trả lời đúng mới được vào!"
 Sau mở: "Cửa mở rồi, sinh nhật vui vẻ nha!"
 Dòng phụ trước mở: "Chỉ cần một câu trả lời đúng là cửa tự mở."
-Bỏ: chip khóa, "Lời mời số 01", dòng chân trang, chip "DÀNH RIÊNG CHO CHANH · tuổi 17" dưới cửa.
+Bỏ: chip khóa, "Lời mời số 01", dòng chân trang, chip "DÀNH RIÊNG CHO DƯƠNG · tuổi 17" dưới cửa.
 Thẻ câu hỏi (`GateQuestion.tsx`)
 Chỉ có câu hỏi và 4 đáp án A-D (nút phụ kiểu kem, viền nâu). Không có nhãn "lời thách đố".
 Mỗi lần vào bốc ngẫu nhiên 1 trong 3 câu trong `content.gateQuiz.questions`.
@@ -141,7 +141,7 @@ Mỗi lần vào bốc ngẫu nhiên 1 trong 3 câu trong `content.gateQuiz.ques
 Nhân vật
 Bỏ `CompanionStrip` ở đáy thẻ. Momonga (vai giữ cửa) đứng bên trái cửa, Usagi bên phải, mỗi bên
 một bubble thoại.
-Trước mở: Momonga dùng `gateBlock`, Usagi nói "Chọn đúng nha Chanh!".
+Trước mở: Momonga dùng `gateBlock`, Usagi nói "Chọn đúng nha Dương!".
 Sau khi mở (`GateOpened.tsx`)
 Thẻ câu hỏi biến mất. Hai bubble đổi thành lời reo của Usagi (`unlock`) và Momonga.
 Một nút chính "Đi tiếp nè" ở giữa, bấm sang màn 2.
@@ -151,12 +151,12 @@ không bị tràn cao trên mobile.
 2. Thiệp chúc (`greeting`): `src/scenes/GreetingScene.tsx`
 Usagi nhảy hoạt hình từng frame (`UsagiHop.tsx`) ngay trên nền, không có khung vòm và chip.
 Có thể giữ số "17" mờ phía sau và bóng bay.
-Tên "Chanh" cỡ lớn (Playfair italic), kèm một dòng nhỏ "tuổi 17, chương mới".
+Tên "Dương" cỡ lớn (Playfair italic), kèm một dòng nhỏ "tuổi 17, chương mới".
 Hai lời chúc là hai bubble của Usagi và Momonga, nằm cạnh thẻ chính, không có dòng đếm.
 Nhạc: giữ đĩa nhạc (`MusicToggle variant="disc"`) nhưng đặt ở góc màn hình, đồng thời xuất
 hiện ở mọi màn sau (xem phần Nhạc).
 Nút chính "Đi tiếp nè", bấm thì bắn confetti 2D rồi sang màn 3. Bỏ nhãn "Đi tiếp · 02/06".
-Thống nhất cách gọi: dùng Chanh ở mọi lời thoại (hiện có chỗ ghi "Dương").
+Thống nhất cách gọi: dùng Dương ở mọi lời thoại (hiện có chỗ ghi "Dương").
 Cần soi: confetti nổ đúng lúc, không đè chữ; Usagi nhảy không khựng; nút nhạc và nút đi tiếp
 không trùng điểm chạm.
 3. Thổi nến (`candle`): `src/scenes/CandleScene.tsx`
@@ -234,7 +234,7 @@ Nhạc (`MusicPlayer.tsx` + `MusicToggle.tsx`)
 Playlist 2 bài (`bai1.mp3`, `bai2.mp3`) sửa ở `content.musicPlaylist`. Hết bài tự chuyển, hết bài
 cuối quay lại bài đầu.
 Đổi so với trước: nút nhạc nay là một nút tròn nhỏ cố định ở góc màn hình, hiện từ màn 2 đến
-hết hành trình, để Chanh tắt được bất cứ lúc nào. Nút chuyển bài chỉ hiện khi playlist có trên
+hết hành trình, để Dương tắt được bất cứ lúc nào. Nút chuyển bài chỉ hiện khi playlist có trên
 1 bài.
 Loader (`Loader.tsx`)
 Preload ảnh nhân vật (`usagiHopFrames`, các role Momonga, vài khung Usagi). Thanh tiến độ chạy
@@ -242,7 +242,7 @@ theo, xong hoặc quá 4 giây thì vào màn 1.
 ---
 Sửa nội dung
 `src/data/content.ts` là nơi duy nhất sửa nội dung.
-`name` / `nickname` / `age`: tên, biệt danh Chanh, tuổi. Dùng "Chanh" thống nhất trong mọi
+`name` / `nickname` / `age`: tên, biệt danh Dương, tuổi. Dùng "Dương" thống nhất trong mọi
 lời thoại.
 `gateQuiz.questions`: 3 câu trắc nghiệm (`question`, 4 `options`, `correct`, tùy chọn
 `almostOption` + `almost`, và `scold` cho sai). Trường `praise` hiện chưa dùng.
@@ -256,7 +256,7 @@ lời thoại.
 Giọng thoại
 Ngắn, thân mật, như bạn bè nói với nhau. Tránh văn quảng cáo.
 Nên tránh	Nên dùng
-Một cánh cửa, một điều bất ngờ.	Khoan đã Chanh, trả lời đúng mới được vào!
+Một cánh cửa, một điều bất ngờ.	Khoan đã Dương, trả lời đúng mới được vào!
 Tiếp tục hành trình	Đi tiếp nè
 Điều ước đã bay lên trời	Ước xong rồi nha!
 Chặng tiếp theo	(bỏ)
@@ -272,7 +272,7 @@ Map role sang file trong `public/characters/`. `Character` tự kẹp chiều r�
 placeholder tròn màu kem và log console nếu file 404. Thêm role mới bằng cách thêm PNG vào thư mục
 và khai báo trong `characters.ts`.
 ---
-Việc cần làm trước khi gửi cho Chanh
+Việc cần làm trước khi gửi cho Dương
 Đồng bộ giao diện
 Gom về một kiểu nút, một bộ font, một bảng màu (mục 1-3 của phần Nguyên tắc).
 Xóa các nhãn, chip, icon và dòng chân trang trong danh sách "Đã bỏ" (mục 8).
@@ -282,7 +282,7 @@ Thay số trang bằng 6 chấm tiến độ.
 Đặt nút nhạc cố định ở góc, hiện từ màn 2.
 Nội dung
 Điền `letterBody`, `giftBody`.
-Sửa "Dương" thành "Chanh" cho thống nhất.
+Dùng "Dương" thống nhất ở mọi lời thoại.
 Sửa nhãn bubble ở màn 4 theo đúng nhân vật.
 Thay `momonga-03.png` vì còn watermark TikTok.
 Kiểm tra

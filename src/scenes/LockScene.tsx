@@ -91,8 +91,8 @@ export function LockScene() {
 
   const momongaLine = opened ? unlockLine : blockLine
   const usagiLine = opened
-    ? 'Yaha! Vào tiệc thôi! Hôm nay Chanh là khách VIP!'
-    : 'Chanh tới rồi! Momonga mở cửa đi!'
+    ? 'Yaha! Vào tiệc thôi! Hôm nay Dương là khách VIP!'
+    : 'Dương tới rồi! Momonga mở cửa đi!'
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col overflow-hidden px-4 pb-8 pt-5 sm:px-6 lg:px-8 lg:py-10">

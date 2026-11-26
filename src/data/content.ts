@@ -69,15 +69,15 @@ export interface BirthdayContent {
 }
 
 export const content: BirthdayContent = {
-  name: 'Duong',
-  nickname: 'Chanh',
+  name: 'Dương',
+  nickname: 'Dương',
   age: 17,
   birthdayISO: '2026-11-27',
   birthdayLabel: '27.11.2026',
 
   ticket: {
     eyebrow: 'Thiệp mời',
-    title: 'Bữa tiệc của Chanh',
+    title: 'Bữa tiệc của Dương',
     subtitle: 'VIP · 17 tuổi · Một người duy nhất',
     code: 'Mã vé: 17',
     note: 'Xuất trình vé cho Momonga ở cửa nhé.',
@@ -90,7 +90,7 @@ export const content: BirthdayContent = {
         question: 'Ngày anh và em lần đầu gặp nhau?',
         options: ['14/02/2026', '05/11/2025', '16/07/2026', '20/10/2025'],
         correct: '16/07/2026',
-        scold: 'Sai ngày rồi! Nghĩ kỹ lại xem nào, Chanh!',
+        scold: 'Sai ngày rồi! Nghĩ kỹ lại xem nào, Dương!',
       },
       {
         question: 'Ngày anh và em bắt đầu yêu nhau?',
@@ -99,7 +99,7 @@ export const content: BirthdayContent = {
         scold: 'Chưa đúng đâu! Nhớ lại ngày hôm đó đi nha.',
       },
       {
-        question: 'Chanh có xinh gái đáng yêu không?',
+        question: 'Dương có xinh gái đáng yêu không?',
         options: ['Có', 'Cũng cũng', 'Không', 'Siêu cấp luôn'],
         correct: 'Siêu cấp luôn',
         almostOption: 'Có',
@@ -112,22 +112,22 @@ export const content: BirthdayContent = {
   usagiLines: {
     gateBlock: [
       'Yaha! Dừng lại! Muốn qua thì phải trả lời đúng câu hỏi!',
-      'Yaha! Cửa này chỉ mở cho Chanh thôi nhá!',
+      'Yaha! Cửa này chỉ mở cho Dương thôi nhá!',
     ],
-    unlock: ['YAHA! Đúng rồi! Cửa mở! Vào nhanh!', 'Yaha! Chanh giỏi quá! Đi tiếp thôi!'],
+    unlock: ['YAHA! Đúng rồi! Cửa mở! Vào nhanh!', 'Yaha! Dương giỏi quá! Đi tiếp thôi!'],
     greeting: [
-      'Chúc mừng sinh nhật Chanh 17 tuổi! Yaha!',
-      'Yaha! Hôm nay Chanh là nhất rồi!',
+      'Chúc mừng sinh nhật Dương 17 tuổi! Yaha!',
+      'Yaha! Hôm nay Dương là nhất rồi!',
     ],
     blowCandle: [
       'Nhấn và giữ để thổi nến nào! 1... 2... Yaha!',
-      'Thổi mạnh lên Chanh! Ước một điều thật to nha!',
+      'Thổi mạnh lên Dương! Ước một điều thật to nha!',
     ],
     momongaSneaksCake: ['Momonga! Bị bắt quả tang ăn vụng bánh rồi nhá!'],
     photoComment: ['Tấm này dễ thương quá!', 'Yaha! Nhớ hôm nay ghê!'],
     letter: ['Thư này Momonga viết bằng cả tâm lòng đó!', 'Đọc chậm thôi, cảm động lắm đó!'],
-    gift: ['Mở quà thôi! Momonga làm phép rồi nè!', 'Yaha! Quà xịn cho Chanh 17 tuổi!'],
-    goodbye: ['Tạm biệt Chanh! Hẹn gặp lại sớm nha! Yaha!', 'Chúc Chanh tuổi 17 thật rực rỡ! Yaha!'],
+    gift: ['Mở quà thôi! Momonga làm phép rồi nè!', 'Yaha! Quà xịn cho Dương 17 tuổi!'],
+    goodbye: ['Tạm biệt Dương! Hẹn gặp lại sớm nha! Yaha!', 'Chúc Dương tuổi 17 thật rực rỡ! Yaha!'],
   },
 
   momongaLines: {
@@ -139,17 +139,17 @@ export const content: BirthdayContent = {
     greeting: ['Sinh nhật vui vẻ nha. Nhớ phần bánh cho tui.', '17 tuổi rồi, lớn rồi, chia bánh cũng phải lớn nha.'],
     blowCandle: ['Thổi nến đi, sắp hết nến rồi, tui đói ăn bánh kia.', 'Ước xong nhớ kể tui nghe với nha.'],
     momongaSneaksCake: ['Bị phát hiện rồi à? Vậy chia nhau nha?'],
-    photoComment: ['Tấm này nhìn Chanh cười tươi ghê.', 'Lưu lại hết đi, mai mốt còn khoe nữa.'],
+    photoComment: ['Tấm này nhìn Dương cười tươi ghê.', 'Lưu lại hết đi, mai mốt còn khoe nữa.'],
     letter: ['Tui thức cả đêm viết thư này đó, đọc kỹ vào.', 'Đừng khóc nha, tui không đưa khăn đâu.'],
     gift: ['Tui yểm bùa rồi, mở là bất ngờ liền!', 'Quà này xịn lắm, mở nhẹ tay thôi nha.'],
-    goodbye: ['Về nhớ mở quà ra xem lại nha. Bye bye.', 'Sinh nhật vui vẻ, ăn ngon ngủ ngon nha Chanh.'],
+    goodbye: ['Về nhớ mở quà ra xem lại nha. Bye bye.', 'Sinh nhật vui vẻ, ăn ngon ngủ ngon nha Dương.'],
   },
 
   photoCaptions: [
     'Có em là đủ.',
     'Cười là cả ngày sáng.',
     'Chiều không hẹn trước.',
-    'Chanh tuổi 17.',
+    'Dương tuổi 17.',
     'Chụp lén mà thương.',
     'Thêm một mùa, vẫn em.',
     'Đẹp nhất khung hình.',
@@ -161,7 +161,7 @@ export const content: BirthdayContent = {
     'Ngày đầu tiên anh biết, có một người làm mọi thứ dịu lại.',
     'Cười thế này thôi, cả ngày của anh đã sáng rồi.',
     'Một buổi chiều không hẹn trước, mà anh nhớ mãi.',
-    'Chanh của tuổi 17, và là người anh thương nhất.',
+    'Dương của tuổi 17, và là người anh thương nhất.',
     'Tấm này anh chụp lén, vì không nỡ bỏ lỡ.',
     'Thêm một mùa nữa, anh vẫn chọn đi cùng em.',
     'Không cần dàn dựng, em đã là điều đẹp nhất trong khung hình.',
@@ -169,7 +169,7 @@ export const content: BirthdayContent = {
     'Một ngày rất đỗi bình thường, có em là thành ngày anh nhớ.',
     'Còn nhiều tấm nữa, anh để dành chụp cùng em thật lâu.',
   ],
-  letterTitle: 'Gửi Chanh tuổi 17',
+  letterTitle: 'Gửi Dương tuổi 17',
   letterBody: `Gửi em,
 
 Chúc mừng sinh nhật yêu của anh!
@@ -179,7 +179,7 @@ Cảm ơn em vì đã xuất hiện trong cuộc sống của anh, mang đến c
 Anh chúc em tuổi mới luôn khỏe mạnh, vui vẻ, đạt được mọi điều mình mong muốn. Và dù mai sau thế nào, anh vẫn muốn là người ở bên cạnh, cùng em đi qua thật nhiều sinh nhật nữa.
 
 Yêu em nhiều lắm! ❤️`,
-  giftTitle: 'Sổ quà của Chanh',
+  giftTitle: 'Sổ quà của Dương',
   giftBody: `Hai tấm coupon nhỏ, đổi lúc nào cũng được.
 Hạn dùng: mãi mãi.`,
   giftCoupons: [

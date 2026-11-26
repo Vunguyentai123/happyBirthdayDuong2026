@@ -9,7 +9,7 @@ import { Character } from '../components/Character'
 import { NextButton, PageFrame, PageHead } from '../components/PaperPage'
 
 // Trang 4: ALBUM KÝ ỨC — polaroid dán băng dính trên dây đèn, vuốt ngang,
-// chấm chuyển ảnh, bấm để phóng to. Ảnh không tự chạy nữa: Chanh giữ nhịp
+// chấm chuyển ảnh, bấm để phóng to. Ảnh không tự chạy nữa: Dương giữ nhịp
 // đọc caption của mình. Caption ngắn in dưới ảnh, câu dài dùng cho alt/zoom.
 const samplePhotos = [
   asset('/characters/usagi-08.png'),
@@ -63,7 +63,7 @@ export function PhotosScene() {
 
   return (
     <PageFrame>
-      <PageHead title="Album" accent="của Chanh" sub="Mỗi tấm là một ngày mình đã giữ lại." />
+      <PageHead title="Album" accent="của Dương" sub="Mỗi tấm là một ngày mình đã giữ lại." />
 
       <section className="album-stage" aria-roledescription="carousel" aria-label="Album ảnh kỷ niệm">
         <div aria-hidden className="album-lights">

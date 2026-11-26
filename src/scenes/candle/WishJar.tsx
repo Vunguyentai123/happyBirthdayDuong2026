@@ -197,7 +197,7 @@ export function WishJar() {
               <JarVisual filled={Boolean(wish)} />
               <div>
                 <h2 id="wish-jar-title" className="wish-jar-title">
-                  {editing ? 'Giữ điều ước trong hũ' : 'Điều ước của Chanh'}
+                  {editing ? 'Giữ điều ước trong hũ' : 'Điều ước của Dương'}
                 </h2>
                 <p className="wish-jar-sub">
                   {editing

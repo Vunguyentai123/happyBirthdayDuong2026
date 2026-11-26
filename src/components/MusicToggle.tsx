@@ -15,7 +15,7 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
   const playlist = content.musicPlaylist?.length ? content.musicPlaylist : [content.musicSrc]
   const trackNo = (trackIndex % playlist.length) + 1
   const trackName = content.musicTitles?.[trackIndex % playlist.length] ?? `Bài ${trackNo}`
-  // Đang tải thì nói rõ để Chanh không tưởng nhạc hỏng rồi bấm tắt.
+  // Đang tải thì nói rõ để Dương không tưởng nhạc hỏng rồi bấm tắt.
   const label = musicOn ? (musicLoading ? 'Đang tải nhạc nền' : 'Tắt nhạc nền') : 'Bật nhạc nền'
   const nextSong = () => {
     nextTrack()

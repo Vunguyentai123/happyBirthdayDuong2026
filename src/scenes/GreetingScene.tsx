@@ -78,7 +78,7 @@ function Balloon({
 
 // Màn 2: HERO SINH NHẬT — một màn duy nhất, to rõ tên + tuổi + ngày.
 // Lời chúc dài đã chuyển sang thư và các màn sau; ở đây chỉ cần cảm giác
-// "hôm nay là tiệc của Chanh" trong 3 giây đầu.
+// "hôm nay là tiệc của Dương" trong 3 giây đầu.
 export function GreetingScene() {
   const next = useSceneStore((s) => s.next)
   const musicOn = useSceneStore((s) => s.musicOn)
