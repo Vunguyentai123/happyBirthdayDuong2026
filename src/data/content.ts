@@ -194,9 +194,9 @@ Hạn dùng: mãi mãi.`,
       body: '',
     },
   ],
-  musicSrc: asset('/audio/3.mp3'),
-  musicPlaylist: [asset('/audio/3.mp3')],
-  musicTitles: ['Bài 3'],
+  musicSrc: asset('/audio/music.mp3'),
+  musicPlaylist: [asset('/audio/music.mp3')],
+  musicTitles: ['Nhạc nền'],
 }
 
 export function pickRandom(lines: string[]): string {

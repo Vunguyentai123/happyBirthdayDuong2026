@@ -1,4 +1,4 @@
-import { SkipForward, Volume2, VolumeX } from 'lucide-react'
+import { LoaderCircle, SkipForward, Volume2, VolumeX } from 'lucide-react'
 import { useSceneStore } from '../store/useSceneStore'
 import { content } from '../data/content'
 
@@ -7,6 +7,7 @@ import { content } from '../data/content'
 // - variant="disc": đĩa than nhỏ đặt cạnh CTA ở thiệp chào mừng.
 export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'disc' }) {
   const musicOn = useSceneStore((s) => s.musicOn)
+  const musicLoading = useSceneStore((s) => s.musicLoading)
   const setMusicOn = useSceneStore((s) => s.setMusicOn)
   const trackIndex = useSceneStore((s) => s.trackIndex)
   const nextTrack = useSceneStore((s) => s.nextTrack)
@@ -14,6 +15,8 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
   const playlist = content.musicPlaylist?.length ? content.musicPlaylist : [content.musicSrc]
   const trackNo = (trackIndex % playlist.length) + 1
   const trackName = content.musicTitles?.[trackIndex % playlist.length] ?? `Bài ${trackNo}`
+  // Đang tải thì nói rõ để Chanh không tưởng nhạc hỏng rồi bấm tắt.
+  const label = musicOn ? (musicLoading ? 'Đang tải nhạc nền' : 'Tắt nhạc nền') : 'Bật nhạc nền'
   const nextSong = () => {
     nextTrack()
     if (!musicOn) setMusicOn(true)
@@ -25,10 +28,11 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
         <button
           onClick={() => setMusicOn(!musicOn)}
           aria-pressed={musicOn}
-          aria-label={musicOn ? 'Tắt nhạc nền' : 'Bật nhạc nền'}
+          aria-label={label}
+          aria-busy={musicOn && musicLoading}
           title={
             musicOn
-              ? `Tắt nhạc nền (đang phát ${trackName}, bài ${trackNo}/${playlist.length})`
+              ? `${label} (${trackName}, bài ${trackNo}/${playlist.length})`
               : `Bật nhạc nền (${trackName}, bài ${trackNo}/${playlist.length})`
           }
           className={`music-disc relative grid h-[54px] w-[54px] place-items-center rounded-full border transition active:scale-95 ${
@@ -38,7 +42,11 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
           <span aria-hidden className={`music-grooves ${musicOn ? 'is-spinning' : ''}`} />
           <span className="relative z-10 grid place-items-center">
             {musicOn ? (
-              <Volume2 size={19} strokeWidth={2.2} />
+              musicLoading ? (
+                <LoaderCircle size={19} strokeWidth={2.2} className="motion-safe:animate-spin" />
+              ) : (
+                <Volume2 size={19} strokeWidth={2.2} />
+              )
             ) : (
               <VolumeX size={18} strokeWidth={2.2} />
             )}
@@ -64,15 +72,22 @@ export function MusicToggle({ variant = 'classic' }: { variant?: 'classic' | 'di
       <button
         onClick={() => setMusicOn(!musicOn)}
         aria-pressed={musicOn}
-        aria-label={musicOn ? 'Tắt nhạc' : 'Bật nhạc'}
-        title={musicOn ? 'Tắt nhạc' : 'Bật nhạc'}
+        aria-label={musicOn ? (musicLoading ? 'Đang tải nhạc' : 'Tắt nhạc') : 'Bật nhạc'}
+        aria-busy={musicOn && musicLoading}
+        title={musicOn ? (musicLoading ? 'Đang tải nhạc…' : 'Tắt nhạc') : 'Bật nhạc'}
         className={`grid h-12 w-12 place-items-center rounded-xl border transition active:scale-95 ${
           musicOn
             ? 'border-[#E9A7BC]/80 bg-[#FFE7EF] text-[#9C2F52] shadow-[0_12px_24px_-16px_rgba(214,92,128,.9),inset_0_1px_0_rgba(255,255,255,.95)]'
             : 'border-[#C9A25D]/45 bg-[#FFF9EE]/85 text-[#6B2336] shadow-[inset_0_1px_0_rgba(255,255,255,.8)] hover:bg-[#FFFCF5]'
         }`}
       >
-        {musicOn ? <Volume2 size={17} /> : <VolumeX size={17} />}
+        {!musicOn ? (
+          <VolumeX size={17} />
+        ) : musicLoading ? (
+          <LoaderCircle size={17} className="motion-safe:animate-spin" />
+        ) : (
+          <Volume2 size={17} />
+        )}
       </button>
       {playlist.length > 1 && (
         <button

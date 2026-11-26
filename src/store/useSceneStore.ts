@@ -10,6 +10,7 @@ export interface SceneStore {
   giftOpen: boolean
   unlocked: boolean
   musicOn: boolean
+  musicLoading: boolean // đang tải/buffer nhạc nền (để nút hiện vòng xoay)
   duckMusic: boolean // hạ nhạc nền khi phát nhạc hộp sinh nhật
   trackIndex: number
   gatePassed: boolean // đã check-in vé ở màn cổng
@@ -22,6 +23,7 @@ export interface SceneStore {
   setGiftOpen: (v: boolean) => void
   setUnlocked: (v: boolean) => void
   setMusicOn: (v: boolean) => void
+  setMusicLoading: (v: boolean) => void
   setDuckMusic: (v: boolean) => void
   nextTrack: () => void
   setGatePassed: (v: boolean) => void
@@ -34,6 +36,7 @@ export const useSceneStore = create<SceneStore>((set) => ({
   giftOpen: false,
   unlocked: false,
   musicOn: false,
+  musicLoading: false,
   duckMusic: false,
   trackIndex: 0,
   gatePassed: false,
@@ -67,6 +70,7 @@ export const useSceneStore = create<SceneStore>((set) => ({
   setGiftOpen: (giftOpen) => set({ giftOpen }),
   setUnlocked: (unlocked) => set({ unlocked }),
   setMusicOn: (musicOn) => set({ musicOn }),
+  setMusicLoading: (musicLoading) => set({ musicLoading }),
   setDuckMusic: (duckMusic) => set({ duckMusic }),
   nextTrack: () => set((s) => ({ trackIndex: s.trackIndex + 1 })),
   setGatePassed: (gatePassed) => set({ gatePassed }),
