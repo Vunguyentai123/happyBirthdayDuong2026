@@ -66,12 +66,16 @@ const AUDIO_CONSTRAINTS: MediaTrackConstraints = {
 }
 
 // Trạng thái quyền micro, nếu trình duyệt cho biết (Chrome có, Safari thường không).
+// Giới hạn 400ms: vài webview treo hẳn permissions.query, không để UI chờ theo.
 async function micPermissionState(): Promise<'granted' | 'denied' | 'prompt' | 'unknown'> {
   try {
     const perms = navigator.permissions
     if (!perms?.query) return 'unknown'
-    const status = await perms.query({ name: 'microphone' as PermissionName })
-    return status.state
+    const status = await Promise.race([
+      perms.query({ name: 'microphone' as PermissionName }),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 400)),
+    ])
+    return status ? status.state : 'unknown'
   } catch {
     return 'unknown'
   }
@@ -424,7 +428,7 @@ export function useMicBlow(onBlow: () => void) {
     // Đã xin sẵn từ cú chạm ở màn trước: hộp thoại đã hiện (hoặc quyền đã có),
     // dùng tiếp luồng đó, không hỏi thêm lần nữa.
     if (prewarm) {
-      void start(true)
+      void start(true, true)
       return
     }
     const state = await micPermissionState()
