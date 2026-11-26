@@ -9,8 +9,6 @@ export const generatedPhotos: string[] = [
   "/photos/7.webp",
   "/photos/8.webp",
   "/photos/c8c0522446cbdd4b.webp",
-  "/photos/ab9804c2dac4c335.webp",
-  "/photos/9117efd63b250a05.webp",
   "/photos/cd053a0d84d509c8.webp",
   "/photos/39f561acbf859529.webp",
   "/photos/a0774367e0972581.webp",
