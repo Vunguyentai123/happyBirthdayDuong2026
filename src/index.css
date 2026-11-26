@@ -4236,9 +4236,10 @@ input:focus-visible,
   position: relative;
   z-index: 1;
   width: min(100%, 460px);
-  max-height: 90dvh;
+  max-height: 100%;
   padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
   overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid rgba(224, 163, 46, 0.42);
   border-bottom: 0;
   border-radius: 1.7rem 1.7rem 0 0;
@@ -4337,7 +4338,8 @@ input:focus-visible,
   background: #fffdf7;
   color: var(--ink);
   font-family: var(--font-round);
-  font-size: 14px;
+  /* 16px là ngưỡng iOS Safari không tự zoom trang khi focus vào ô nhập. */
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.5;
   resize: vertical;

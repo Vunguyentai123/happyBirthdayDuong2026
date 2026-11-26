@@ -73,6 +73,7 @@ export function WishJar() {
   const [note, setNote] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const dialogRef = useRef<HTMLDivElement | null>(null)
+  const layerRef = useRef<HTMLDivElement | null>(null)
 
   // Gửi tiếp các điều ước còn nợ từ lần trước (mất mạng / đóng tab giữa chừng).
   useEffect(() => {
@@ -108,6 +109,31 @@ export function WishJar() {
       window.clearTimeout(id)
     }
   }, [open, editing])
+
+  // iPhone: bàn phím ảo không làm co layout viewport, nên lớp phủ phải bám theo
+  // visualViewport — nhờ vậy bảng điều ước luôn nằm trên bàn phím, không bị che
+  // mất nút "Thả vào hũ".
+  useEffect(() => {
+    if (!open) return
+    const el = layerRef.current
+    const vv = window.visualViewport
+    if (!el || !vv) return
+    const apply = () => {
+      el.style.top = `${vv.offsetTop}px`
+      el.style.height = `${vv.height}px`
+      el.style.bottom = 'auto'
+    }
+    apply()
+    vv.addEventListener('resize', apply)
+    vv.addEventListener('scroll', apply)
+    return () => {
+      vv.removeEventListener('resize', apply)
+      vv.removeEventListener('scroll', apply)
+      el.style.top = ''
+      el.style.height = ''
+      el.style.bottom = ''
+    }
+  }, [open])
 
   const submit = () => {
     const result = saveWish(draft)
@@ -174,7 +200,7 @@ export function WishJar() {
 
       {open &&
         createPortal(
-          <div className="wish-jar-layer">
+          <div className="wish-jar-layer" ref={layerRef}>
           <button
             type="button"
             className="wish-jar-backdrop"
