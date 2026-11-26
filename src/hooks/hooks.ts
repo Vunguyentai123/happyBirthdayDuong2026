@@ -195,7 +195,7 @@ export function useMicBlow(onBlow: () => void) {
     if (!quiet) setHelpOpen(true)
   }, [])
 
-  const start = useCallback(async (quiet = false) => {
+  const start = useCallback(async (quiet = false, auto = false) => {
     const s = st.current
     if (s.stream || s.pending) return
     manualOff.current = false
@@ -250,6 +250,24 @@ export function useMicBlow(onBlow: () => void) {
     const failFor = (err: unknown) => {
       const name = (err as DOMException)?.name
       if (name === 'NotAllowedError' || name === 'SecurityError') {
+        // Lượt xin tự động: Safari/iPhone từ chối mọi lời gọi nằm ngoài cử chỉ
+        // chạm, nên đây chưa chắc là khách bấm "Không cho phép". Hỏi lại trạng
+        // thái quyền: bị chặn thật thì nhắc nhẹ, còn lại chỉ cần chạm một lần.
+        if (auto) {
+          void micPermissionState().then((state) => {
+            if (state === 'denied') {
+              fail(
+                isInAppBrowser() ? 'in-app' : 'denied',
+                'Micro đang bị chặn — chạm nút micro để xem cách bật nhé.',
+                true,
+              )
+              return
+            }
+            setProblem('')
+            setNote('Chạm vào màn hình một lần để bật micro nhé.')
+          })
+          return
+        }
         fail(
           isInAppBrowser() ? 'in-app' : 'denied',
           quiet
@@ -424,11 +442,12 @@ export function useMicBlow(onBlow: () => void) {
       )
       return
     }
-    // 'prompt'/'unknown': KHÔNG gọi getUserMedia trong timer trên iPhone —
-    // Safari chỉ hiện hộp thoại cấp quyền khi lời gọi nằm trong cử chỉ chạm,
-    // nên để màn thổi nến hỏi ở lần chạm đầu tiên (xem `ask`). Android/Chrome
-    // cho hỏi ngoài cử chỉ nên thử luôn cho khách khỏi phải chạm thêm.
-    if (micPlatform() === 'android') void start(true)
+    // 'prompt'/'unknown': xin quyền NGAY trên mọi nền tảng — laptop (Chrome/Edge/
+    // Firefox) và Android hiện hộp thoại gốc của trình duyệt; khách chỉ bấm "Cho
+    // phép", không phải vào Cài đặt. Safari/iPhone không cho gọi ngoài cử chỉ
+    // chạm nên lời gọi này bị từ chối im lặng; khi đó note nhắc chạm một lần và
+    // hộp thoại sẽ hiện ở cú chạm kế tiếp (xem `ask` + CandleScene).
+    void start(true, true)
   }, [start])
 
   // Khách ra Cài đặt bật quyền rồi quay lại tab: tự mở micro luôn, khỏi bấm lại.

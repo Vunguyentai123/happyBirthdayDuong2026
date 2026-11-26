@@ -71,10 +71,11 @@ export function CandleScene({ lite }: { lite: boolean }) {
   const autoStartMic = mic.autoStart
   const askMic = mic.ask
 
-  // Vào màn là tự xin quyền micro: khách chỉ cần bấm "Cho phép" trong hộp thoại
-  // của điện thoại, không phải vào Cài đặt. Máy đã cấp quyền thì micro mở luôn;
-  // máy chưa từng hỏi thì lần chạm đầu tiên trên màn này sẽ bung hộp thoại gốc
-  // của trình duyệt (iPhone/Safari chỉ cho gọi getUserMedia trong cử chỉ chạm).
+  // Vào màn là tự xin quyền micro (kể cả laptop): nếu quyền đã có thì micro mở
+  // luôn; nếu chưa từng hỏi, trình duyệt hiện hộp thoại "Cho phép micro?" — khách
+  // chỉ bấm Cho phép, không phải vào Cài đặt. Trên iPhone/Safari lời gọi phải
+  // nằm trong cử chỉ chạm, nên cú chạm đầu tiên trên màn này (kể cả nút "Giữ để
+  // thổi") sẽ bung hộp thoại; nút micro tự xin trong onClick của nó.
   useEffect(() => {
     if (wishBlown) return
     const id = window.setTimeout(() => void autoStartMic(), 600)
@@ -83,12 +84,11 @@ export function CandleScene({ lite }: { lite: boolean }) {
       window.removeEventListener('pointerdown', onTap, true)
       window.removeEventListener('keydown', onTap, true)
     }
-    const isUi = (target: EventTarget | null) =>
-      target instanceof Element &&
-      !!target.closest('button, a, input, textarea, select, [role="button"]')
+    const isMicToggle = (target: EventTarget | null) =>
+      target instanceof Element && !!target.closest('[data-mic-toggle]')
     function onTap(event: Event) {
       // Nút micro tự xin quyền trong onClick của nó; bỏ qua để không giành lượt.
-      if (isUi(event.target)) return
+      if (isMicToggle(event.target)) return
       cleanup()
       void askMic()
     }
@@ -191,6 +191,7 @@ export function CandleScene({ lite }: { lite: boolean }) {
               <div className="candle-tools">
                 <button
                   type="button"
+                  data-mic-toggle
                   onClick={mic.toggle}
                   aria-pressed={mic.on}
                   aria-label={mic.on ? 'Tắt micro' : 'Thổi nến bằng micro'}
